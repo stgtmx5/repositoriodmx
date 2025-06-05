@@ -1,0 +1,4 @@
+CREATE TABLE DocLink (Sys_PK INT  NOT NULL AUTO_INCREMENT, PRIMARY KEY (Sys_PK), Sys_TimeStamp DATETIME  NOT NULL , Sys_GUID VARCHAR(32), Sys_DTCreated DATETIME , Sys_User VARCHAR(5), Sys_LastUser VARCHAR(5), Sys_Exported BOOL , Sys_DTExported DATETIME , Sys_Info VARCHAR(32), FK_Doc VARCHAR(32), FK_Parent VARCHAR(32), Sis BOOL , TypeParent VARCHAR(50),sys_recver int default 0,sys_deleted bit null,sys_lock int null);
+CREATE TABLE Docs (Sys_PK INT  NOT NULL AUTO_INCREMENT, PRIMARY KEY (Sys_PK), Sys_TimeStamp DATETIME  NOT NULL , Sys_GUID VARCHAR(32), Sys_DTCreated DATETIME , Sys_User VARCHAR(5), Sys_LastUser VARCHAR(5), Sys_Exported BOOL , Sys_DTExported DATETIME , Sys_Info VARCHAR(32), Data BLOB , Description VARCHAR(500), MiniData BLOB , Name VARCHAR(50), TypeData VARCHAR(5), Words VARCHAR(200),sys_recver int default 0,sys_deleted bit null,sys_lock int null);
+
+
