@@ -95,7 +95,7 @@ function ImprimirIngresosXFormaPago(PKCorte,Divisa,TCambio,DivisaPred,ErrDesc){
 	if(ErrDesc==null)
 		ErrDesc="";
 	
-	R=ThisCnn.execute("SELECT SUM(MovCaja.Cheques) AS Cheques, SUM(MovCaja.Depositos) AS Depositos, SUM(MovCaja.Efectivo) AS Efectivo, SUM(MovCaja.Tarjetas) AS Tarjetas, SUM( MovCaja.Vales) AS Vales FROM MovCaja WHERE MovCaja.ICorte="+PKCorte+" AND MovCaja.IDivisa="+Divisa+" AND (MovCaja.Cheques>=0 AND  MovCaja.Depositos>=0 AND MovCaja.Efectivo>=0 AND MovCaja.Tarjetas>=0 AND MovCaja.Vales>=0) AND MovCaja.ICategoria != (SELECT Categoria.Sys_PK FROM Categoria WHERE Categoria.Descripcion LIKE '%sobrante%')");
+	R=ThisCnn.execute("SELECT SUM(MovCaja.Cheques) AS Cheques, SUM(MovCaja.Depositos) AS Depositos, SUM(MovCaja.Efectivo) AS Efectivo, SUM(MovCaja.Tarjetas) AS Tarjetas, SUM( MovCaja.Vales) AS Vales FROM MovCaja WHERE MovCaja.ICorte="+PKCorte+" AND MovCaja.IDivisa="+Divisa+" AND (MovCaja.Cheques>=0 AND  MovCaja.Depositos>=0 AND MovCaja.Efectivo>=0 AND MovCaja.Tarjetas>=0 AND MovCaja.Vales>=0) AND MovCaja.ICategoria != (SELECT Categoria.Sys_PK FROM Categoria WHERE Categoria.Descripcion LIKE '%sobrante%' LIMIT 1)");
 	if(R==null){
 		eBasic.eMsgbox(ErrDesc + "(Error al obtener ingresos por tipo del corte)");
 		return 0;
@@ -169,7 +169,7 @@ function ImprimirIngresosXFormaPago(PKCorte,Divisa,TCambio,DivisaPred,ErrDesc){
 function ImprimirIngresosXCategoria(PKCorte,PKCaja,Divisa,TCambio,DivisaPred,ErrDesc,fnsinicial,ftipo){
 	var SQL;
 
-	SQL="SELECT Categoria.Descripcion AS MovCategoria, SUM(MovCaja.Cheques+MovCaja.Depositos+MovCaja.Efectivo+ MovCaja.Tarjetas + MovCaja.Vales) AS Total FROM Categoria INNER JOIN MovCaja ON Categoria.Sys_PK = MovCaja.ICategoria WHERE MovCaja.ICorte=" + PKCorte + " AND MovCaja.IDivisa=" + Divisa + " AND (MovCaja.Cheques>=0 AND  MovCaja.Depositos>=0 AND MovCaja.Efectivo>=0 AND MovCaja.Tarjetas>=0 AND MovCaja.Vales>=0) AND MovCaja.ICategoria != (SELECT Categoria.Sys_PK FROM Categoria WHERE Categoria.Descripcion LIKE '%sobrante%') GROUP BY Categoria.Descripcion UNION SELECT MovCaja.Notas AS MovCategoria, IF(MovCaja.Efectivo = 0, MovCaja.Tarjetas, MovCaja.Efectivo) AS Total FROM MovCaja WHERE MovCaja.ICorte=" + PKCorte + " AND MovCaja.ICategoria = (SELECT Categoria.Sys_PK FROM Categoria WHERE Categoria.Descripcion LIKE '%sobrante%')"
+	SQL="SELECT Categoria.Descripcion AS MovCategoria, SUM(MovCaja.Cheques+MovCaja.Depositos+MovCaja.Efectivo+ MovCaja.Tarjetas + MovCaja.Vales) AS Total FROM Categoria INNER JOIN MovCaja ON Categoria.Sys_PK = MovCaja.ICategoria WHERE MovCaja.ICorte=" + PKCorte + " AND MovCaja.IDivisa=" + Divisa + " AND (MovCaja.Cheques>=0 AND  MovCaja.Depositos>=0 AND MovCaja.Efectivo>=0 AND MovCaja.Tarjetas>=0 AND MovCaja.Vales>=0) AND MovCaja.ICategoria != (SELECT Categoria.Sys_PK FROM Categoria WHERE Categoria.Descripcion LIKE '%sobrante%' LIMIT 1) GROUP BY Categoria.Descripcion UNION SELECT MovCaja.Notas AS MovCategoria, IF(MovCaja.Efectivo = 0, MovCaja.Tarjetas, MovCaja.Efectivo) AS Total FROM MovCaja WHERE MovCaja.ICorte=" + PKCorte + " AND MovCaja.ICategoria = (SELECT Categoria.Sys_PK FROM Categoria WHERE Categoria.Descripcion LIKE '%sobrante%' LIMIT 1)"
 	
 	return IngresosEgresosXCartegoria(SQL,PKCorte,PKCaja,Divisa,TCambio,DivisaPred,ErrDesc+"(Error al obtener ingresos del corte)",fnsinicial,ftipo); 
 }
@@ -178,7 +178,7 @@ function ImprimirEgresosXCategoria(PKCorte,PKCaja,Divisa,TCambio,DivisaPred,ErrD
 	var SQL;
 	var FSaldo=0;
 
-	SQL ="SELECT Categoria.Descripcion AS MovCategoria, SUM(MovCaja.Cheques+MovCaja.Depositos+MovCaja.Efectivo+ MovCaja.Tarjetas + MovCaja.Vales) AS Total FROM Categoria INNER JOIN MovCaja ON Categoria.Sys_PK = MovCaja.ICategoria WHERE MovCaja.ICorte=" + PKCorte + " AND MovCaja.IDivisa=" + Divisa + " AND (MovCaja.Cheques<=0 AND  MovCaja.Depositos<=0 AND MovCaja.Efectivo<=0 AND MovCaja.Tarjetas<=0 AND MovCaja.Vales<=0) AND MovCaja.ICategoria != (SELECT Categoria.Sys_PK FROM Categoria WHERE Categoria.Descripcion LIKE '%faltante%') GROUP BY Categoria.Descripcion UNION SELECT MovCaja.Notas AS MovCategoria, IF(MovCaja.Efectivo = 0, MovCaja.Tarjetas, MovCaja.Efectivo) AS Total FROM MovCaja WHERE MovCaja.ICorte=" + PKCorte + " AND MovCaja.ICategoria = (SELECT Categoria.Sys_PK FROM Categoria WHERE Categoria.Descripcion LIKE '%faltante%')";
+	SQL ="SELECT Categoria.Descripcion AS MovCategoria, SUM(MovCaja.Cheques+MovCaja.Depositos+MovCaja.Efectivo+ MovCaja.Tarjetas + MovCaja.Vales) AS Total FROM Categoria INNER JOIN MovCaja ON Categoria.Sys_PK = MovCaja.ICategoria WHERE MovCaja.ICorte=" + PKCorte + " AND MovCaja.IDivisa=" + Divisa + " AND (MovCaja.Cheques<=0 AND  MovCaja.Depositos<=0 AND MovCaja.Efectivo<=0 AND MovCaja.Tarjetas<=0 AND MovCaja.Vales<=0) AND MovCaja.ICategoria != (SELECT Categoria.Sys_PK FROM Categoria WHERE Categoria.Descripcion LIKE '%faltante%' LIMIT 1) GROUP BY Categoria.Descripcion UNION SELECT MovCaja.Notas AS MovCategoria, IF(MovCaja.Efectivo = 0, MovCaja.Tarjetas, MovCaja.Efectivo) AS Total FROM MovCaja WHERE MovCaja.ICorte=" + PKCorte + " AND MovCaja.ICategoria = (SELECT Categoria.Sys_PK FROM Categoria WHERE Categoria.Descripcion LIKE '%faltante%' LIMIT 1)";
 	// codigo anterior
 	//return IngresosEgresosXCartegoria(SQL,PKCorte,PKCaja,Divisa,TCambio,DivisaPred,ErrDesc+"(Error al obtener egresos del corte)");
 	return IngresosEgresosXCartegoria(SQL,PKCorte,PKCaja,Divisa,TCambio,DivisaPred,ErrDesc+"(Error al obtener egresos del corte)",FSaldo,fbtEgreso);
@@ -453,12 +453,12 @@ function ImprimirTicketsDelCorte(PKCorte,ErrDesc){
 	}
 
 	//Propinas
-	//Impresora.Texto(Impresora.AligTextInStr(Impresora.SetChr(12,"="),30,1," "));
-	//Impresora.Texto(Impresora.AligTextInStr("PROPINAS",16,0," ")+Impresora.AligTextInStr(Impresora.FormatoDinero(propinas),14,1," "));
-	//Impresora.Texto("");
 	Impresora.Texto(Impresora.AligTextInStr(Impresora.SetChr(12,"="),30,1," "));
-	Impresora.Texto(Impresora.AligTextInStr("INGRESOS EN CAJA",16,0," ")+Impresora.AligTextInStr(Impresora.FormatoDinero(Contado),14,1," "));
-	//Impresora.Texto("(INCLUYE PROPINAS)");
+	Impresora.Texto(Impresora.AligTextInStr("PROPINAS",16,0," ")+Impresora.AligTextInStr(Impresora.FormatoDinero(propinas),14,1," "));
+	Impresora.Texto("");
+	Impresora.Texto(Impresora.AligTextInStr(Impresora.SetChr(12,"="),30,1," "));
+	Impresora.Texto(Impresora.AligTextInStr("INGRESOS EN CAJA",16,0," ")+Impresora.AligTextInStr(Impresora.FormatoDinero(Contado+propinascaja),14,1," "));
+	Impresora.Texto("(INCLUYE PROPINAS)");
 	Impresora.Texto("");
 	////////////////////
 	return Contado+Credito;
