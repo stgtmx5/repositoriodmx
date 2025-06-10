@@ -220,6 +220,24 @@ var sql="";
 		Impresora.Texto (sDetalle);
 		
 		//************************************************
+		// Funcion para la reimpresion de recargas telefonicas
+		//*************************************************
+		if(Rst("notas").Value!=null)
+		{
+			cStr2 = "";
+			cStr2 = Rst("Tel").Value;
+			cStr2 = Impresora.AligTextInStr(cStr2, 30, 0, " ");
+			Impresora.Texto(cStr2);
+			cStr3 = "";
+			cStr3 = Rst("Aut").Value;
+			cStr3 = Impresora.AligTextInStr(cStr3, 30, 0, " ");
+			Impresora.Texto(cStr3);
+
+			cStr4 = "";
+			cStr4 = Rst("fol").Value;
+			cStr4 = Impresora.AligTextInStr(cStr4, 30, 0, " ");
+			Impresora.Texto(cStr4);
+		}
 
 	Rst.MoveNext();
 	}
