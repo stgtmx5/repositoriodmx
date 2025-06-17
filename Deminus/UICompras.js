@@ -1,5 +1,5 @@
-//Versión: 3.2
-//Déminus
+//Versiï¿½n: 3.2
+//Dï¿½minus
 var Diot=null;
 //var CmdSQLQCompras = "SELECT * FROM qryCompras WHERE Mes=@Mes AND Anio=@Anio;";
 var CmdSQLQCompras = "Select qryCompras.*, cFormasPago.Const as DFormaPago, cStatusAdministrativos.Const as DstatusAdmin,Compra.uf_color FROM qryCompras Inner Join ((Compra INNER JOIN cStatusAdministrativos ON Compra.StatusAdministrativo=cStatusAdministrativos.ID) Inner Join  cFormasPago ON Compra.FormaPago = cFormasPago.ID) ON qryCompras.Sys_PK = Compra.Sys_PK  WHERE Mes=@Mes AND Anio=@Anio;";
@@ -18,14 +18,14 @@ function CrearPanel(){
 	Application.UIShortCuts.CreateAction("P_Compras_A01","Explorar documentos",0,"","","","UICompras.QCompras",0,"","","",0);
 	
 	Application.UIShortCuts.CreateAction("P_Compras_A02","Nuevo Pedido",0,"","","","UICompras.CrearPedido1",0,"","","",0);
-	Application.UIShortCuts.CreateAction("P_Compras_A03","Nueva Remisión",0,"","","","UICompras.CrearRemision1",0,"","","",0);
+	Application.UIShortCuts.CreateAction("P_Compras_A03","Nueva Remisiï¿½n",0,"","","","UICompras.CrearRemision1",0,"","","",0);
 	Application.UIShortCuts.CreateAction("P_Compras_A04","Nueva Factura",0,"","","","UICompras.CrearFactura1",0,"","","",0);
-	Application.UIShortCuts.CreateAction("P_Compras_A05","Nueva Nota de crédito",0,"","","","UICompras.CrearNotaC1",0,"","","",0);
+	Application.UIShortCuts.CreateAction("P_Compras_A05","Nueva Nota de crï¿½dito",0,"","","","UICompras.CrearNotaC1",0,"","","",0);
 	
 	
 	Application.UIShortCuts.CreateAction("P_Compras_A06","GuardarPedido",0,"","","","UICompras.GuardarPedido",0,"","","",0);
 	Application.UIShortCuts.CreateAction("P_Compras_A07","AgregarProducto",0,"","","","UICompras.AgregarProducto",0,"","","",0);
-	Application.UIShortCuts.CreateAction("P_Compras_A07_1","Catálogo de Productos",0,"","","","UICompras.CatalogoProductos",0,"","","",0);
+	Application.UIShortCuts.CreateAction("P_Compras_A07_1","Catï¿½logo de Productos",0,"","","","UICompras.CatalogoProductos",0,"","","",0);
 	
 	Application.UIShortCuts.CreateAction("P_Compras_A08","GuardarRemision",0,"","","","UICompras.GuardarRemision",0,"","","",0);
 	Application.UIShortCuts.CreateAction("P_Compras_A09","DocIncluidos",0,"","","","UICompras.DocIncluidos",0,"","","",0);	
@@ -43,7 +43,7 @@ function CrearPanel(){
 	
 	Application.UIShortCuts.CreateAction("P_Compras_A22","Guardar y cerrar",0,"","","","UICompras.GuardarCerrar",0,"","","",0);
 	Application.UIShortCuts.CreateAction("P_Compras_A23","Nuevo documento en blanco",0,"","","","UICompras.Nuevo",0,"","","",0);
-	Application.UIShortCuts.CreateAction("P_Compras_A24","Nuevo igual a éste",0,"","","","UICompras.CopiarDocumento",0,"","","",0);
+	Application.UIShortCuts.CreateAction("P_Compras_A24","Nuevo igual a ï¿½ste",0,"","","","UICompras.CopiarDocumento",0,"","","",0);
 	
 	Application.UIShortCuts.CreateAction("P_Compras_A25","Cargar CFD",0,"","","","UICompras.CargarCFD",0,"","","",0);
 	Application.UIShortCuts.CreateAction("P_Compras_A26","Archivos",0,"","","","UICompras.ArchivosCompra",0,"","","",0);
@@ -95,7 +95,7 @@ if (Brw==null)
 		Brw.ShowToolBar();
 		
 		Brw.AddButton("Nuevo Pedido","P_Compras_A02");
-		Brw.AddButton("Nueva Remisión","P_Compras_A03");
+		Brw.AddButton("Nueva Remisiï¿½n","P_Compras_A03");
 		Brw.AddButton("Nueva Factura","P_Compras_A04");
 		Brw.AddButton("Nueva Nota de Credito","P_Compras_A05");
 		Brw.AddButton("Cancelar","P_Compras_A14");
@@ -127,7 +127,7 @@ if (Brw==null)
 		//Ocultar columnas		
 		//Asignar nombre de Columna
 		//Brw.SetCaptionByFieldName("Estado","Estado Financiero");
-		//Brw.SetCaptionByFieldName("Codigo","Código");
+		//Brw.SetCaptionByFieldName("Codigo","Cï¿½digo");
 		Brw.HideFields("Sys_PK;Mes;Anio;ID;IProveedor;CodigoProveedor;TipoDocumento;StatusFinanciero;StatusFacturacion;StatusEntrega;StatusAdministrativo;Estado;uf_Color");		
 				
 		//Funcionalidad del Panel de detalle 25-01-2010
@@ -285,7 +285,7 @@ switch(ThisObj.GetCurrentDocument())
 			isB=GuardarPedido(objAction);
 			break;
 		case 3:
-			//"Remisión"	
+			//"Remisiï¿½n"	
 			isB=GuardarRemision(objAction);
 			break;
 		case 4:
@@ -293,7 +293,7 @@ switch(ThisObj.GetCurrentDocument())
 			isB=GuardarFactura(objAction);
 			break;
 		case 5:
-		//"Nota de crédito"
+		//"Nota de crï¿½dito"
 			isB=GuardarNota(objAction);
 			break;
 	}
@@ -330,7 +330,7 @@ function GuardarCerrar(objAction){
 		if(!r){
 			return 0;
 		}		
-		//if (eBasic.eMsgbox("¿Desea crear un nuevo documento?", 4)==7){
+		//if (eBasic.eMsgbox("ï¿½Desea crear un nuevo documento?", 4)==7){
 			objAction.Context.ActiveWindow.UnloadMe();
 			return 0;
 		//}
@@ -342,7 +342,7 @@ function GuardarCerrar(objAction){
 		Ax.NewDocument();
 				
 		switch(documento){
-			case 1: //Cotización				
+			case 1: //Cotizaciï¿½n				
 				break;
 			case 2:
 				dlg.ClearButtonsBar();
@@ -350,7 +350,7 @@ function GuardarCerrar(objAction){
 				dlg.AddButton("Guardar (F6)","P_Compras_A12");
 				dlg.AddButton("Guardar y cerrar (F8)","P_Compras_A22");
 				dlg.AddButton("Buscar producto/servicio","P_Compras_A07");
-				dlg.AddButton("Catálogo de productos","P_Compras_A07_1");	
+				dlg.AddButton("Catï¿½logo de productos","P_Compras_A07_1");	
 				dlg.AddButton("Importar archivo mvi","P_Compras_A27"); //15102011
 				//jv - Productos similares - 27/11/2013
 				dlg.AddButton("Productos similares", "P_Compras_N01");
@@ -358,11 +358,11 @@ function GuardarCerrar(objAction){
 				break;
 			case 3:
 				dlg.ClearButtonsBar();
-				dlg.Caption="Remisión";				
+				dlg.Caption="Remisiï¿½n";				
 				dlg.AddButton("Guardar (F6)","P_Compras_A12");
 				dlg.AddButton("Guardar y cerrar (F8)","P_Compras_A22");
 				dlg.AddButton("Buscar producto/servicio","P_Compras_A07");
-				dlg.AddButton("Catálogo de productos","P_Compras_A07_1");	
+				dlg.AddButton("Catï¿½logo de productos","P_Compras_A07_1");	
 				dlg.AddButton("Documentos Incluidos","P_Compras_A09");		
 				dlg.AddButton("Importar archivo mvi","P_Compras_A27"); //15102011		
 
@@ -377,7 +377,7 @@ function GuardarCerrar(objAction){
 				dlg.AddButton("Guardar (F6)","P_Compras_A12");
 				dlg.AddButton("Guardar y cerrar (F8)","P_Compras_A22");
 				dlg.AddButton("Buscar producto/servicio","P_Compras_A07");	
-				dlg.AddButton("Catálogo de productos","P_Compras_A07_1");	
+				dlg.AddButton("Catï¿½logo de productos","P_Compras_A07_1");	
 				dlg.AddButton("Documentos Incluidos","P_Compras_A09");	
 				dlg.AddButton("Incluir Consignaciones","P_Compras_A17");
 				dlg.AddButton("Cargar CFD","P_Compras_A25"); //gb02062011	
@@ -387,11 +387,11 @@ function GuardarCerrar(objAction){
 				break;
 			case 5:
 				dlg.ClearButtonsBar();
-				dlg.Caption="Nota de crédito";
+				dlg.Caption="Nota de crï¿½dito";
 				dlg.AddButton("Guardar (F6)","P_Compras_A12");	
 				dlg.AddButton("Guardar y cerrar (F8)","P_Compras_A22");
 				dlg.AddButton("Buscar producto/servicio","P_Compras_A07");	
-				dlg.AddButton("Catálogo de productos","P_Compras_A07_1");
+				dlg.AddButton("Catï¿½logo de productos","P_Compras_A07_1");
 				dlg.AddButton("Cargar CFD","P_Compras_A25"); //gb02062011	
 				dlg.AddButton("Importar archivo mvi","P_Compras_A27"); //15102011
 				//jv - Productos similares - 27/11/2013
@@ -401,7 +401,7 @@ function GuardarCerrar(objAction){
 		}*/
 		return -1;
 	}catch(e){
-		Log("Ocurrió un error al cerrar");
+		Log("Ocurriï¿½ un error al cerrar");
 		throw(e);
 		return 0;
 	}
@@ -504,7 +504,7 @@ var p=0;
 		}					
 			
 	}catch(e){
-		Log("No se actualizarón los precios con respecto a la utilidad. Realice el proceso manualmente.");
+		Log("No se actualizarï¿½n los precios con respecto a la utilidad. Realice el proceso manualmente.");
 	}
 
 }
@@ -605,15 +605,15 @@ var ObjCompra;
 	Application.eDoEvents();	
 	switch(ObjCompra.Documento){
 		case 1:
-		 dlg.Caption = "Cotización: " + ObjCompra.Referencia;break;
+		 dlg.Caption = "Cotizaciï¿½n: " + ObjCompra.Referencia;break;
 		case 2:
 		dlg.Caption = "Pedido: " + ObjCompra.Referencia;break;
 		case 3:
-		dlg.Caption = "Remisión: " + ObjCompra.Referencia;break;
+		dlg.Caption = "Remisiï¿½n: " + ObjCompra.Referencia;break;
 		case 4:
 		dlg.Caption = "Factura: " + ObjCompra.Referencia;break;
 		case 5:
-		dlg.Caption = "Nota de crédito: " + ObjCompra.Referencia;break;
+		dlg.Caption = "Nota de crï¿½dito: " + ObjCompra.Referencia;break;
 	}
 	AsignarCarpetaRepotes(dlg);
 	
@@ -634,9 +634,9 @@ var ObjCompra;
 			case 4:
 			case 5:
 				dlg.AddButton("Nuevo documento en blanco","P_Compras_A23");
-				dlg.AddButton("Nuevo igual a éste","P_Compras_A24");
+				dlg.AddButton("Nuevo igual a ï¿½ste","P_Compras_A24");
 				dlg.AddButton("Modificar Documento","P_Compras_A15");
-				//jv - Implementación para mofificar datos generales de la DIOT.
+				//jv - Implementaciï¿½n para mofificar datos generales de la DIOT.
 				if(ObjCompra.Documento==4 && ObjCompra.StatusAdministrativo!=99)
 				{
 					dlg.AddButton("Datos generales DIOT", "P_Compras_N02");
@@ -657,7 +657,7 @@ var ObjCompra;
 					dlg.AddButton("Guardar (F6)","P_Compras_A12");
 					dlg.AddButton("Guardar y cerrar (F8)","P_Compras_A22");
 					dlg.AddButton("Buscar producto/servicio","P_Compras_A07");
-					dlg.AddButton("Catálogo de Productos","P_Compras_A07_1");
+					dlg.AddButton("Catï¿½logo de Productos","P_Compras_A07_1");
 					dlg.AddButton("Importar archivo mvi","P_Compras_A27"); //15102011
 					dlg.CmdKeyDown="UICompras.Command_KeyDown";
 					//jv Productos similares - 27/11/2013
@@ -666,7 +666,7 @@ var ObjCompra;
 					ThisObj.EditByObject(ObjCompra);
 				}else{
 					dlg.AddButton("Nuevo documento en blanco","P_Compras_A23");
-					dlg.AddButton("Nuevo igual a éste","P_Compras_A24");
+					dlg.AddButton("Nuevo igual a ï¿½ste","P_Compras_A24");
 					dlg.AddButton("Modificar Documento","P_Compras_A15");
 					ThisObj.ViewByObject(ObjCompra);
 					dlg.Title = ThisObj.GetEstadoCompra();
@@ -723,7 +723,7 @@ var ThisObj;
 	dlg.AddButton("Guardar (F6)","P_Compras_A12");
 	dlg.AddButton("Guardar y cerrar (F8)","P_Compras_A22");
 	dlg.AddButton("Buscar producto/servicio","P_Compras_A07");
-	dlg.AddButton("Catálogo de productos","P_Compras_A07_1");	
+	dlg.AddButton("Catï¿½logo de productos","P_Compras_A07_1");	
 	dlg.AddButton("Importar archivo mvi","P_Compras_A27"); //15102011
 	
 	//jv - Productos similares
@@ -759,7 +759,7 @@ var ThisObj;
 			//jv - Productos similares - 27/11/2013
 			objAction.Context.ActiveWindow.GetButtonByIDAction("P_Compras_N01").Enabled=false; //Productos similares	
 			if (objAction.Context.ActiveWindow.GetButtonByIDAction("P_Compras_A03")==null) 
-				objAction.Context.ActiveWindow.AddButton("Generar Remisión","P_Compras_A03");
+				objAction.Context.ActiveWindow.AddButton("Generar Remisiï¿½n","P_Compras_A03");
 			else
 				objAction.Context.ActiveWindow.GetButtonByIDAction("P_Compras_A03").Enabled=true;
 				
@@ -770,7 +770,7 @@ var ThisObj;
 				
 			Application.MouseDefault();	
 			
-			eBasic.eMsgbox("¡El Pedido se guardó correctamente!",6);
+			eBasic.eMsgbox("ï¿½El Pedido se guardï¿½ correctamente!",6);
 			var Formato = eBasic.AddSlashPath(Application.GetPath(0)) + "Reports\\Compras\\Pedido_proveedor.xpd";
 			Reportes.EjecutarReporte(Formato,1,0,false,"","pPrimarykey",ThisObj.ThisObj.Sys_PK,null);
 			return -1;
@@ -789,9 +789,9 @@ var ThisObj;
 		objAction.Context.ActiveWindow.GetButtonByIDAction("P_Compras_A07").Enabled=true;		
 		objAction.Context.ActiveWindow.GetButtonByIDAction("P_Compras_A07_1").Enabled=true;
 		
-		if (objAction.Context.ActiveWindow.GetButtonByIDAction("P_Compras_A03")!=null) //botón generar remisión
+		if (objAction.Context.ActiveWindow.GetButtonByIDAction("P_Compras_A03")!=null) //botï¿½n generar remisiï¿½n
 			objAction.Context.ActiveWindow.GetButtonByIDAction("P_Compras_A03").Enabled=false;
-		if (objAction.Context.ActiveWindow.GetButtonByIDAction("P_Compras_A04")!=null) //botón generar factura
+		if (objAction.Context.ActiveWindow.GetButtonByIDAction("P_Compras_A04")!=null) //botï¿½n generar factura
 			objAction.Context.ActiveWindow.GetButtonByIDAction("P_Compras_A04").Enabled=false;
 			
 		Application.MouseDefault();			
@@ -822,7 +822,7 @@ if (Pedido!=null){
 		return 0;
 	}
 	dlg.CmdProxyEvent="UICompras.CapturarEvento"; //eventos del AXCompra	
-	dlg.Caption = "Remisión"
+	dlg.Caption = "Remisiï¿½n"
 	dlg.TagData="IDCompra";
 	dlg.CmdKeyDown="UICompras.Command_KeyDown";
 	AsignarCarpetaRepotes(dlg);
@@ -857,7 +857,7 @@ if (Pedido!=null){
 	dlg.AddButton("Guardar (F6)","P_Compras_A12");
 	dlg.AddButton("Guardar y cerrar (F8)","P_Compras_A22");
 	dlg.AddButton("Buscar producto/servicio","P_Compras_A07");
-	dlg.AddButton("Catálogo de Productos","P_Compras_A07_1");	
+	dlg.AddButton("Catï¿½logo de Productos","P_Compras_A07_1");	
 	dlg.AddButton("Documentos Incluidos","P_Compras_A09");	
 	dlg.AddButton("Importar archivo mvi","P_Compras_A27"); //15102011
 	//jv - Productos similares
@@ -870,20 +870,29 @@ if (Pedido!=null){
 }
 
 function GuardarRemision(objAction){
-var ThisObj;
-var sPedido;
+	var ThisObj;
+	var sPedido;
 	
 	ThisObj = objAction.Context.ActiveWindow.GetAxObject();
 	if (!ThisObj.Validate()) return 0;
-	
 	ThisObj.GetData();
+	
+	var temp_objcompra = ThisObj.ThisObj;
+	var temp_objparent = ThisObj.ParentCompra;
+	var temp_objdoccompra = ThisObj.ColDocCompra;
+	// Soluciï¿½n al error 'type mismatch' en Win11
+	if (temp_objcompra == null) temp_objcompra = undefined;
+	if (temp_objparent == null) temp_objparent = undefined;
+	if (temp_objdoccompra == null) temp_objdoccompra = undefined;
+	
 	//Mostrar dialogo de cobro, --> Enviar  Categoria Predeterminada
-	if (Compra.ShowDlgFormaPago(ThisObj.ThisObj,0,ThisObj.ParentCompra,true,ThisObj.ColDocCompra)){				
+	//if (Compra.ShowDlgFormaPago(ThisObj.ThisObj,0,ThisObj.ParentCompra,true,ThisObj.ColDocCompra)) {
+	if (Compra.ShowDlgFormaPago(temp_objcompra,0,temp_objparent,true,temp_objdoccompra)) {
 		Application.eDoEvents();
-		ThisObj.ViewByObject(ThisObj.ThisObj);	
-		Application.MouseHourglass();			
-		//Cambiar la acción del boton guardar por modificar
-		objAction.Context.ActiveWindow.SetActionToButton("P_Compras_A12","P_Compras_A15","Modificar Remisión");
+		ThisObj.ViewByObject(ThisObj.ThisObj);
+		Application.MouseHourglass();
+		//Cambiar la acciï¿½n del boton guardar por modificar
+		objAction.Context.ActiveWindow.SetActionToButton("P_Compras_A12","P_Compras_A15","Modificar Remisiï¿½n");
 		objAction.Context.ActiveWindow.GetButtonByIDAction("P_Compras_A22").Enabled=false;
 		objAction.Context.ActiveWindow.GetButtonByIDAction("P_Compras_A07").Enabled=false; //Agregar Producto y servicio
 		objAction.Context.ActiveWindow.GetButtonByIDAction("P_Compras_A07_1").Enabled=false; //Agregar Producto y servicio
@@ -893,15 +902,15 @@ var sPedido;
 		
 		//jv - Productos similares - 27/11/2013
 		objAction.Context.ActiveWindow.GetButtonByIDAction("P_Compras_N01").Enabled=false; //Productos similares	
-		objAction.Context.ActiveWindow.AddButton("Cancelar Remisión","P_Compras_A16");		
+		objAction.Context.ActiveWindow.AddButton("Cancelar Remisiï¿½n","P_Compras_A16");		
 		if (objAction.Context.ActiveWindow.GetButtonByIDAction("P_Compras_A04")==null)
 				objAction.Context.ActiveWindow.AddButton("Generar Factura","P_Compras_A04");
 		
 		//Camibar titulo
-		objAction.Context.ActiveWindow.Caption="Remisión "+ThisObj.ThisObj.Referencia;
+		objAction.Context.ActiveWindow.Caption="Remisiï¿½n "+ThisObj.ThisObj.Referencia;
 		DesactivarAccionesProcesadas(objAction.Context.ActiveWindow.Parent);
 		Application.MouseDefault();
-		eBasic.eMsgbox("¡La Remisión se guardó correctamente!",6);
+		eBasic.eMsgbox("ï¿½La Remisiï¿½n se guardï¿½ correctamente!",6);
 		var Formato = eBasic.AddSlashPath(Application.GetPath(0)) + "Reports\\Compras\\Remision_Compra.xpd";
 			Reportes.EjecutarReporte(Formato,1,0,false,"","pPrimarykey",ThisObj.ThisObj.Sys_PK,null);
 			return -1;		
@@ -910,7 +919,7 @@ var sPedido;
 		if(Compra.LastErrorDescrip!="")
 			eBasic.eMsgbox(Compra.LastErrorDescrip,6);
 		else
-			Log("Error al guardar Remisión");
+			Log("Error al guardar Remisiï¿½n");
 		
 		return 0;
 	}
@@ -975,7 +984,7 @@ if (Remision!=null){
 	dlg.AddButton("Guardar (F6)","P_Compras_A12");
 	dlg.AddButton("Guardar y cerrar (F8)","P_Compras_A22");
 	dlg.AddButton("Buscar producto/servicio","P_Compras_A07");	
-	dlg.AddButton("Catálogo de Productos","P_Compras_A07_1");	
+	dlg.AddButton("Catï¿½logo de Productos","P_Compras_A07_1");	
 	dlg.AddButton("Documentos Incluidos","P_Compras_A09");	
 	dlg.AddButton("Incluir Consignaciones","P_Compras_A17");
 	dlg.AddButton("Cargar CFD","P_Compras_A25"); //gb02062011	
@@ -991,18 +1000,30 @@ if (Remision!=null){
 }
 
 function GuardarFactura(objAction){
-var ThisObj;
-	ThisObj = objAction.Context.ActiveWindow.GetAxObject();	
+	var ThisObj;
 	
+	ThisObj = objAction.Context.ActiveWindow.GetAxObject();
 	if (!ThisObj.Validate()) return 0;
+	ThisObj.GetData();
 	
-	ThisObj.GetData();	
+	var temp_objcompra = ThisObj.ThisObj;
+	var temp_objparent = ThisObj.ParentCompra;
+	var temp_objdoccompra = ThisObj.ColDocCompra;
+	var temp_objconsignaciones = ThisObj.ColConsignaciones;
+	var temp_objinfolotesseries = ThisObj.ExtInfoLotesSeriesCol;
+	// Soluciï¿½n al error 'type mismatch' en Win11
+	if (temp_objcompra == null) temp_objcompra = undefined;
+	if (temp_objparent == null) temp_objparent = undefined;
+	if (temp_objdoccompra == null) temp_objdoccompra = undefined;
+	if (temp_objconsignaciones == null) temp_objconsignaciones = undefined;
+	if (temp_objinfolotesseries == null) temp_objinfolotesseries = undefined;
 	
-	if (Compra.ShowDlgFormaPago(ThisObj.ThisObj,0,ThisObj.ParentCompra,true,ThisObj.ColDocCompra,ThisObj.ColConsignaciones,ThisObj.ExtInfoLotesSeriesCol)){        
+	//if (Compra.ShowDlgFormaPago(ThisObj.ThisObj,0,ThisObj.ParentCompra,true,ThisObj.ColDocCompra,ThisObj.ColConsignaciones,ThisObj.ExtInfoLotesSeriesCol)) {
+	if (Compra.ShowDlgFormaPago(temp_objcompra,0,temp_objparent,true,temp_objdoccompra,temp_objconsignaciones,temp_objinfolotesseries)) {
 		Application.eDoEvents();
-		ThisObj.ViewByObject(ThisObj.ThisObj); 
-		Application.MouseHourglass();	
-		//Cambiar la acción del boton guardar por modificar
+		ThisObj.ViewByObject(ThisObj.ThisObj);
+		Application.MouseHourglass();
+		//Cambiar la acciï¿½n del boton guardar por modificar
 		objAction.Context.ActiveWindow.SetActionToButton("P_Compras_A12","P_Compras_A15","Modificar Factura");		
 		objAction.Context.ActiveWindow.GetButtonByIDAction("P_Compras_A22").Enabled=false;
 		objAction.Context.ActiveWindow.GetButtonByIDAction("P_Compras_A07").Enabled=false; //Agregar Producto y servicio
@@ -1022,13 +1043,13 @@ var ThisObj;
 		
 		//cambiar titulo
 		objAction.Context.ActiveWindow.Caption="Factura "+ThisObj.ThisObj.Referencia;
-		objAction.Context.ActiveWindow.TagData="IDCompra"; //Esto permite crear mas facturas de una remisión en consignación.
+		objAction.Context.ActiveWindow.TagData="IDCompra"; //Esto permite crear mas facturas de una remisiï¿½n en consignaciï¿½n.
 		DesactivarAccionesProcesadas(objAction.Context.ActiveWindow.Parent);
 		
-		//CREAR PÓLIZA
+		//CREAR Pï¿½LIZA
 		Poliza.PolizaCompraFacturacion(ThisObj.ThisObj);
 		Application.MouseDefault();
-		eBasic.eMsgbox("¡La factura se guardó correctamente!",6);
+		eBasic.eMsgbox("ï¿½La factura se guardï¿½ correctamente!",6);
 		
 		//Guardar en Diot
 		DIOT(ThisObj.ThisObj.Sys_PK, false);
@@ -1062,7 +1083,7 @@ if(NoEditar==null)
 	Application.MouseHourglass();
 	dlg=Application.AXForms.CreateForm("FormCompra","DlgNota" + cntP);	
 	dlg.CmdProxyEvent="UICompras.CapturarEvento"; //eventos del AXCompra	
-	dlg.Caption = "Nota de Crédito";		
+	dlg.Caption = "Nota de Crï¿½dito";		
 	dlg.CmdKeyDown="UICompras.Command_KeyDown";
 	AsignarCarpetaRepotes(dlg);
 	
@@ -1098,7 +1119,7 @@ if(NoEditar==null)
 	dlg.AddButton("Guardar (F6)","P_Compras_A12");	
 	dlg.AddButton("Guardar y cerrar (F8)","P_Compras_A22");
 	dlg.AddButton("Buscar producto/servicio","P_Compras_A07");	
-	dlg.AddButton("Catálogo de Productos","P_Compras_A07_1");	
+	dlg.AddButton("Catï¿½logo de Productos","P_Compras_A07_1");	
 	dlg.AddButton("Cargar CFD","P_Compras_A25"); //gb02062011
 	dlg.AddButton("Importar archivo mvi","P_Compras_A27"); //15102011
 
@@ -1122,11 +1143,19 @@ var ThisObj;
 	if (!ThisObj.Validate()) return 0;
 	
 	ThisObj.GetData();
-	if(Compra.lgBuy.DevolucionXNotaCredito(ThisObj.ThisObj,true,ThisObj.ParentCompra)){
+
+	var temp_obj = ThisObj.ThisObj;
+	var temp_objparent = ThisObj.ParentCompra;
+	
+	if (temp_obj == null) temp_obj = undefined;
+	if (temp_objparent == null) temp_objparent = undefined;
+
+	if(Compra.lgBuy.DevolucionXNotaCredito(temp_obj,true,temp_objparent))
+	{
 		ThisObj.ViewByObject(ThisObj.ThisObj); 	
 		Application.MouseHourglass();	
-		//Cambiar la acción del boton guardar por modificar
-		objAction.Context.ActiveWindow.SetActionToButton("P_Compras_A12","P_Compras_A15","Modificar Nota de Crédito");		
+		//Cambiar la acciï¿½n del boton guardar por modificar
+		objAction.Context.ActiveWindow.SetActionToButton("P_Compras_A12","P_Compras_A15","Modificar Nota de Crï¿½dito");		
 		objAction.Context.ActiveWindow.GetButtonByIDAction("P_Compras_A22").Enabled=false;
 		objAction.Context.ActiveWindow.GetButtonByIDAction("P_Compras_A07").Enabled=false; //Agregar Producto y servicio
 		objAction.Context.ActiveWindow.GetButtonByIDAction("P_Compras_A07_1").Enabled=false; //Agregar Producto y servicio
@@ -1136,7 +1165,7 @@ var ThisObj;
 		
 		Poliza.PolizaCompraDevolucionXNotaCredito(ThisObj.ThisObj);
 		Application.MouseDefault();
-		eBasic.eMsgbox("¡La Nota de Crédito se guardó correctamente!",6);
+		eBasic.eMsgbox("ï¿½La Nota de Crï¿½dito se guardï¿½ correctamente!",6);
 // aca debe ir la impresion
 		var Formato = eBasic.AddSlashPath(Application.GetPath(0)) + "Reports\\Compras\\NCredito_Compra.xpd";
 		Reportes.EjecutarReporte(Formato,1,0,false,"","pPrimarykey",ThisObj.ThisObj.Sys_PK,null);		
@@ -1145,7 +1174,7 @@ var ThisObj;
 		if(Compra.lgBuy.LastErrorDescrip!="")
 			eBasic.eMsgbox(Compra.lgBuy.LastErrorDescrip,6);
 		else
-			Log("Error no se pudo guardar la Nota de Crédito");
+			Log("Error no se pudo guardar la Nota de Crï¿½dito");
 		return 0;
 	}
 }
@@ -1153,7 +1182,7 @@ var ThisObj;
 
 function DevolucionDeConsignacion(ObjCompra){
 	if(Compra.DevolucionDeCosignacion(ObjCompra)){
-		eBasic.eMsgbox("¡La devolución se hizo correctamente!",6);
+		eBasic.eMsgbox("ï¿½La devoluciï¿½n se hizo correctamente!",6);
 		ActualizarQCompras();
 	}
 }
@@ -1179,7 +1208,7 @@ if (Brw==null) return 0;
 		
 	if (ThisObj.LoadFromADOConnection (PKCompra,"", Application.adoCnn,3))
 	{
-		//Si el documento no es de solo lectura ó es una remisión pero esta parcialmente facturada
+		//Si el documento no es de solo lectura ï¿½ es una remisiï¿½n pero esta parcialmente facturada
 		if (!Compra.lgBuy.DocOnlyRead(ThisObj) || (ThisObj.Documento==3 && ThisObj.StatusFacturacion==2)) {
 			switch(ThisObj.Documento){
 				case 2:
@@ -1206,12 +1235,12 @@ var opc;
 	ask=Application.NewAsk();
 	if (ObjCompra.StatusAdministrativo!=99){
 		if(ObjCompra.StatusEntrega==1){
-			ask.SetOption(10,"Registrar la recepción de mercancías","Se generá una remisión para la mercancía contenida en el pedido actualmente seleccionado.");
-			ask.SetOption(20,"Registrar y Facturar este Pedido","Se generá una Factura para la mercancía contenida en el pedido actualmente seleccionado.");
+			ask.SetOption(10,"Registrar la recepciï¿½n de mercancï¿½as","Se generï¿½ una remisiï¿½n para la mercancï¿½a contenida en el pedido actualmente seleccionado.");
+			ask.SetOption(20,"Registrar y Facturar este Pedido","Se generï¿½ una Factura para la mercancï¿½a contenida en el pedido actualmente seleccionado.");
 		}
 	}
-	ask.SetOption(30,"Nuevo Documento en Blanco","Eliga esta opción si desea empezar a registrar un nuevo pedido.");
-	//ask.SetOption(40,"Asistente para nuevos Documentos","Eliga esta opción si desea que un asistente le guie para realizar un nuevo documento");	
+	ask.SetOption(30,"Nuevo Documento en Blanco","Eliga esta opciï¿½n si desea empezar a registrar un nuevo pedido.");
+	//ask.SetOption(40,"Asistente para nuevos Documentos","Eliga esta opciï¿½n si desea que un asistente le guie para realizar un nuevo documento");	
 	
 	opc=ask.Ask();	
 	if(opc==0) return 0;
@@ -1239,22 +1268,22 @@ var opc;
 	ask=Application.NewAsk();		
 	if (ObjCompra.StatusAdministrativo!=99){
 		if(ObjCompra.StatusFacturacion==1){			
-			ask.SetOption(10,"Facturar esta remisión","Se generá una factura que ampare la remisión actualmente seleccionada.");
+			ask.SetOption(10,"Facturar esta remisiï¿½n","Se generï¿½ una factura que ampare la remisiï¿½n actualmente seleccionada.");
 		}else{			
 			if(ObjCompra.StatusFinanciero==3 && ObjCompra.StatusFacturacion==2)
-				ask.SetOption(10,"Facturar productos restantes en consignación","Se generá una factura que ampare el resto de productos que no han sido facturados.");
+				ask.SetOption(10,"Facturar productos restantes en consignaciï¿½n","Se generï¿½ una factura que ampare el resto de productos que no han sido facturados.");
 		}		
 		
 		if(ObjCompra.StatusFacturacion==1)			
-			ask.SetOption(20,"Cancelar remisión","Elija esta opción si desea cancelar la remisión seleccionada.");
+			ask.SetOption(20,"Cancelar remisiï¿½n","Elija esta opciï¿½n si desea cancelar la remisiï¿½n seleccionada.");
 		
 		//Validar si el Documento se encuentra en consignacionn
 		if (ObjCompra.StatusFinanciero==3)
-			ask.SetOption(50,"Devolver mercancía en consignación","El sistema generará una nota de credito por la devolución de la mercancía");
+			ask.SetOption(50,"Devolver mercancï¿½a en consignaciï¿½n","El sistema generarï¿½ una nota de credito por la devoluciï¿½n de la mercancï¿½a");
 	}
 			
-	ask.SetOption(30,"Nuevo Documento en Blanco","Eliga esta opción si desea empezar a realizar un nuevo documento.");
-	//ask.SetOption(40,"Asistente para nuevos Documentos","Eliga esta opción si desea que un asistente le guie para realizar un nuevo documento");	
+	ask.SetOption(30,"Nuevo Documento en Blanco","Eliga esta opciï¿½n si desea empezar a realizar un nuevo documento.");
+	//ask.SetOption(40,"Asistente para nuevos Documentos","Eliga esta opciï¿½n si desea que un asistente le guie para realizar un nuevo documento");	
 	
 	opc = ask.Ask();	
 	if(opc==0) return 0;
@@ -1263,7 +1292,7 @@ var opc;
 	{
 		case 10: 	
 			if(EnEdicion("EditCompra_PK" +ObjCompra.Sys_PK)==-1) return 0;
-			//Validar si Documento esta en consignación 
+			//Validar si Documento esta en consignaciï¿½n 
 			if (ObjCompra.StatusFinanciero==3){	
 				FacturarConsignacion(ObjCompra);
 			}
@@ -1291,10 +1320,10 @@ var opc;
 
 	ask=Application.NewAsk();
 	if (ObjCompra.StatusAdministrativo!=99)
-		ask.SetOption(10,"Cancelar la Factura Actual","Se generá una factura que ampare la Factura actualmente seleccionada.");
+		ask.SetOption(10,"Cancelar la Factura Actual","Se generï¿½ una factura que ampare la Factura actualmente seleccionada.");
 	
-	ask.SetOption(20,"Nuevo Documento en Blanco","Eliga esta opción si desea empezar a registrar un nueva nota de credito.");
-	//ask.SetOption(30,"Asistente para nuevos Documentos","Eliga esta opción si desea que un asistente le guie para realizar un nuevo documento");	
+	ask.SetOption(20,"Nuevo Documento en Blanco","Eliga esta opciï¿½n si desea empezar a registrar un nueva nota de credito.");
+	//ask.SetOption(30,"Asistente para nuevos Documentos","Eliga esta opciï¿½n si desea que un asistente le guie para realizar un nuevo documento");	
 	
 	
 	opc=ask.Ask();	
@@ -1319,8 +1348,8 @@ var ask;
 var opc;
 
 	ask=Application.NewAsk();
-		ask.SetOption(10,"Nuevo Documento en Blanco","Eliga esta opción si desea empezar a registrar una Cotización, Pedido, Remisión, Factura o Nota de credito.");
-		//ask.SetOption(20,"Asistente para nuevos Documentos","Eliga esta opción si desea que un asistente le guie para realizar un nuevo documento");
+		ask.SetOption(10,"Nuevo Documento en Blanco","Eliga esta opciï¿½n si desea empezar a registrar una Cotizaciï¿½n, Pedido, Remisiï¿½n, Factura o Nota de credito.");
+		//ask.SetOption(20,"Asistente para nuevos Documentos","Eliga esta opciï¿½n si desea que un asistente le guie para realizar un nuevo documento");
 	
 	opc=ask.Ask();	
 	if(opc==0) return 0;
@@ -1381,19 +1410,19 @@ var Brw;
 		eBasic.eMsgbox("No se puede cancelar el documento seleccionado.",6);
 		return 0;
 	}else{
-		if (eBasic.eMsgbox("¿Está seguro que desea cancelar el documento actualmente seleccionado?", 4)==7)
+		if (eBasic.eMsgbox("ï¿½Estï¿½ seguro que desea cancelar el documento actualmente seleccionado?", 4)==7)
 			return 0;
 	}
 	
 	if (Compra.lgBuy.CancelarCompra(ObjCompra)){					
-		if(ObjCompra.Documento==4){ //SI SE CANCELÓ UNA FACTURA
+		if(ObjCompra.Documento==4){ //SI SE CANCELï¿½ UNA FACTURA
 			Application.MouseHourglass();	
 			Poliza.PolizaCompraCancelacionFactura(ObjCompra);
 			Application.MouseDefault();
 		}
 	
-		eBasic.eMsgbox("¡El Documento se canceló correctamente!",6);
-		//Si el documento se cancela correctamente, entonces deshabilita el botón Cancelar
+		eBasic.eMsgbox("ï¿½El Documento se cancelï¿½ correctamente!",6);
+		//Si el documento se cancela correctamente, entonces deshabilita el botï¿½n Cancelar
 		 if (ObjAction!=null){
 			 ObjAction.Context.ActiveWindow.Title="Documento cancelado";
 			 ObjAction.Context.ActiveWindow.HideButtons();
@@ -1468,7 +1497,7 @@ if (SysPK==null) return 0;
 				case 4:
 					TituloFactura(ThisObj,OtherObj,Brw);break;
 				case 5:
-					Brw.SetTitle("Nota de crédito procesada");break;
+					Brw.SetTitle("Nota de crï¿½dito procesada");break;
 			}
 		}else
 			Log("Error al obtener el estado actual del documento.");
@@ -1479,16 +1508,16 @@ if (SysPK==null) return 0;
 
 function TituloCotizacion(OtherObj,Brw){
 //Si esta aplicado : Cotizacion incluida en el documento :OtherObj.Referencia
-// No aplicado : Cotización 
+// No aplicado : Cotizaciï¿½n 
 	if (OtherObj!=null){
-		Brw.SetTitle("Cotización incluida en el documento: " + OtherObj.Referencia);			
+		Brw.SetTitle("Cotizaciï¿½n incluida en el documento: " + OtherObj.Referencia);			
 	}else
-		Brw.SetTitle("Cotización");		
+		Brw.SetTitle("Cotizaciï¿½n");		
 }
 function TituloPedido(ThisObj,OtherObj,Brw){
 	
 	if (OtherObj!=null){
-		Brw.SetTitle("Pedido recibido, según consta el documento: " + OtherObj.Referencia);			
+		Brw.SetTitle("Pedido recibido, segï¿½n consta el documento: " + OtherObj.Referencia);			
 	}else{
 		if(ThisObj.StatusEntrega==1){
 			Brw.SetTitle("Pedido por Recibir");	
@@ -1507,20 +1536,20 @@ function TituloRemision(ThisObj,OtherObj,Brw){
 // eBasic.eMsgbox("Doc:"+ThisObj.Documento +"   Relac:"+OtherObj.Documento);
 	if (OtherObj!=null){
 		//Existe una relacion		
-		Brw.SetTitle("Remisión Facturada, según consta el documento: " + OtherObj.Referencia);			
+		Brw.SetTitle("Remisiï¿½n Facturada, segï¿½n consta el documento: " + OtherObj.Referencia);			
 	}else{				
 		switch (ThisObj.StatusFinanciero){
 			case 0:
 				Brw.SetTitle("");break;
 			case 1:
-				Brw.SetTitle("Remisión con adeudo");break;
+				Brw.SetTitle("Remisiï¿½n con adeudo");break;
 			case 2:
-				Brw.SetTitle("Remisión pagada el "+Application.DateToString(ThisObj.FLiquidacion));break;
+				Brw.SetTitle("Remisiï¿½n pagada el "+Application.DateToString(ThisObj.FLiquidacion));break;
 			case 3:				
-				Brw.SetTitle("Remisión en consignación");break;
+				Brw.SetTitle("Remisiï¿½n en consignaciï¿½n");break;
 		}
 		if (ThisObj.StatusAdministrativo==99){
-			Brw.SetTitle("Remisión cancelada");
+			Brw.SetTitle("Remisiï¿½n cancelada");
 		}
 	}
 
@@ -1532,13 +1561,13 @@ function TituloFactura(ThisObj,OtherObj,Brw){
 // Si esta aplicado a un documento y statusadmnistrativo = 99--- Factura Cancelada Segun Documento : otherobj.referencia
 	if (OtherObj!=null && ThisObj.StatusAdministrativo==99){
 		//Existe una relacion
-		Brw.SetTitle("Facturada cancelada, según consta el documento: " + OtherObj.Referencia);			
+		Brw.SetTitle("Facturada cancelada, segï¿½n consta el documento: " + OtherObj.Referencia);			
 	}else{
 		switch (ThisObj.StatusFinanciero){
 			case 0:
 				Brw.SetTitle(" ");break;
 			case 1:
-				Brw.SetTitle("Factura a crédito");break;
+				Brw.SetTitle("Factura a crï¿½dito");break;
 			case 2:
 				Brw.SetTitle("Factura pagada el " +Application.DateToString(ThisObj.FLiquidacion));break;			
 		}
@@ -1567,13 +1596,13 @@ var Documento;
 		switch(Opendlg.GetAxObject().GetCurrentDocument()){
 			//case 1:
 			case 2:Documento="un Pedido";break;
-			case 3:Documento="una Remisión";break;
+			case 3:Documento="una Remisiï¿½n";break;
 			case 4:Documento="una Factura";break;
 			//case 5:
 		}
 		if (Documento==null)
 			Documento="un proceso";
-		eBasic.eMsgbox("No fue posible continuar, actualmente se está realizando "+ Documento +" del documento seleccionado.",6);
+		eBasic.eMsgbox("No fue posible continuar, actualmente se estï¿½ realizando "+ Documento +" del documento seleccionado.",6);
 		Opendlg.Zorder();
 		return 0;
 	}
@@ -1584,7 +1613,7 @@ function EnEdicion(AXFormName){
 	var dlg;		
 	dlg=Application.AXForms.AXForm(AXFormName);
 	if (dlg!=null){		
-		eBasic.eMsgbox("No se pude continuar porque el documento está actualmente abierto.\nCierre el documento e intentelo de nuevo.",6);
+		eBasic.eMsgbox("No se pude continuar porque el documento estï¿½ actualmente abierto.\nCierre el documento e intentelo de nuevo.",6);
 		return -1;
 	}else
 		return 0;		
@@ -1641,12 +1670,12 @@ function CambioTipoDocumento(AX){
 	AX.AddButton("Guardar (F6)","P_Compras_A12");
 	AX.AddButton("Guardar y cerrar (F8)","P_Compras_A22");
 	AX.AddButton("Buscar producto/servicio","P_Compras_A07");
-	AX.AddButton("Catálogo de Productos","P_Compras_A07_1");
+	AX.AddButton("Catï¿½logo de Productos","P_Compras_A07_1");
 	switch(Doc){				
 		case 2: //Pedido						
 			AX.Caption="Pedido";break;				
-		case 3: //Remisión						
-			AX.Caption="Remisión";			
+		case 3: //Remisiï¿½n						
+			AX.Caption="Remisiï¿½n";			
 			AX.AddButton("Documentos Incluidos","P_Compras_A09");	
 			break;
 		case 4: //Factura		
@@ -1655,8 +1684,8 @@ function CambioTipoDocumento(AX){
 			AX.AddButton("Incluir Consignaciones","P_Compras_A17");
 			AX.AddButton("Cargar CFD","P_Compras_A25"); //gb02062011
 			break;
-		case 5: //NCrédito					
-			AX.Caption="Nota de Crédito";
+		case 5: //NCrï¿½dito					
+			AX.Caption="Nota de Crï¿½dito";
 			AX.AddButton("Cargar CFD","P_Compras_A25"); //gb02062011
 	}
 
@@ -1697,7 +1726,7 @@ function Detail(){
 	}
 	catch(e)
 	{
-		eBasic.eMsgbox("Error al obtener información para el panel de detalle");
+		eBasic.eMsgbox("Error al obtener informaciï¿½n para el panel de detalle");
 		return;
 	}
 }
@@ -1712,7 +1741,7 @@ function GetReferencia(PK){
 		if (!(r.EOF && r.BOF))
 			s=r.Fields("Referencia").Value;
 		else
-			s="No se encontró la compra";
+			s="No se encontrï¿½ la compra";
 		r.Close();
 		return s;
 	}
@@ -1849,7 +1878,7 @@ function ArchivosCompra(){
 			return 0;
 		}
 		if(r.EOF && r.BOF){
-			Log("No se encontró el registro.");
+			Log("No se encontrï¿½ el registro.");
 			return 0;
 		}
 		
@@ -1875,7 +1904,7 @@ function Log(Error){
 		Application.FireEventLog(Error);
 }
 
-//Nueva implementación de métodos 2014
+//Nueva implementaciï¿½n de mï¿½todos 2014
 //Autor: jv 
 //Fecha: 27-11-2013
 function BuscarSimilares(objAction)
@@ -1947,7 +1976,7 @@ function BuscarSimilares(objAction)
 			}
 			else
 			{
-				Log("Es seleccionar el centro de consumo para realizar la búsqueda.");
+				Log("Es seleccionar el centro de consumo para realizar la bï¿½squeda.");
 				return -1;
 			}
 		}
