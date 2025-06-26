@@ -25,18 +25,19 @@ var NetCfdi33=null;
 
 function evAlIniciar()
 {
-	loadScript("modulo_recargas","(Subprograma de recargas)");
-	loadScript("modulo_guarderia", "(Subprograma de guarderia de equipaje)");
+		loadScript("modulo_recargas","(Subprograma de recargas)");
+		loadScript("modulo_guarderia", "(Subprograma de guarderia de equipaje)");
 	//Se ejecuta al iniciar la aplicación, puede contener secuencias de inicialización para este script
 	//eBasic.eMsgbox("Hola mundo");
 	
+	//Ejemplo de inicialización de control ActiveX acoplado
+	//if (!MainForm.CreateAX("HPOSExample.Simulador", "NombreCualquiera", "", "")) eBasic.eMsgbox("Error al crear ActiveX");
 	loadScript("UIRequisiciones", "(Subprograma Funciones de configuraci?n de requisiones)");
 	loadScript("pos_events","(Subprograma manejador de eventos)" );
 	loadScript("pos_support","(Subprograma Funciones de Soporte)");
 	loadScript("saldoCaja","(Subprograma funciones al cerrar el corte)");
 	loadScript("config_email_arqueo_deminus","(Subprograma para configurar el de envío de correo.)");
 	loadScript("pos_requisiciones","(Subprograma de requisiciones.)");
-	loadScript("mov_inventario","(Subprograma Funciones de movimientos de inventario)");
 	//if(gFunciones.CFDActivo()){
 		loadScript("cfd","(Subprograma funciones para generacón de Comprobantes Fiscales Digitales)");	
 		
@@ -254,14 +255,19 @@ function mssqldf1()
 function Ingreso(PKMovCaja)
 {
 	var ErrDesc="Error al imprimir vale de ingreso";
-	
+
 	if(PKMovCaja==null){ 
 		eBasic.eMsgbox(ErrDesc + "(No se ha indicado la clave principal)");
 		return 0;
 	}
 	//return ImprimirVale(PKMovCaja,"INGRESO",ErrDesc);
 	if (loadScript("prn_vale","El sub-programa para imprimir vales  pudo cargarse"))
+	{
+
 		return prn_vale.ImprimirVale(PKMovCaja,"INGRESO",ErrDesc);
+	}
+	else
+		return 0;
 }
 
 function Egreso(PKMovCaja)
@@ -417,6 +423,9 @@ function Factura(PKFactura){
 	return -1;
 }
 
+// IMPRESION DEL FONDO INICIAL 
+// ***********************************************
+
 function evInicioSesion(Usuario,PKCaja,PKCajero){
 	//Al iniciar sesion
 	loadScript("UIRequisiciones","(Subprograma Funciones de configuración de requisiones)");
@@ -424,6 +433,10 @@ function evInicioSesion(Usuario,PKCaja,PKCajero){
 	
 	try{
 	//UIRequisiciones.createObjects();
+		if(LBEfectivo.CurrentPKMovCajaXFondoInicial>0){
+			Ingreso(LBEfectivo.CurrentPKMovCajaXFondoInicial);	
+			LBEfectivo.CurrentPKMovCajaXFondoInicial=0;
+		}
 	}catch(e){}
 	
 	AddPosCommand();
