@@ -124,6 +124,7 @@ var Rst;
 var Precio;
 var sDetalle; // Cadena de Detalle de producto
 var cStr;
+var cStr2;
 var bIva;
 var Desc;
 var Imp;
@@ -135,6 +136,7 @@ var PrecioTotalXProducto=0;
 var DescuentoIncluido;	
 var X;
 var CantidadProd=0;
+var spkProd;
 
 var propina=0;
 var sql="";
@@ -154,7 +156,10 @@ var sql="";
 		bIva=true; // Determina si se desglosa los impuestos. True: Dezglosar
 
 		
-	sql="Select Precio,Descuentos,Impuestos,Cantidad,Unidad,Codigo,Descripcion From qryDetalleTicket Where Venta=" + SysPK;
+	//sql="Select Precio,Descuentos,Impuestos,Cantidad,Unidad,Codigo,Descripcion, IProducto, notas From qryDetalleTicket Where Venta=" + SysPK;
+	sql="Select Precio,Descuentos,Impuestos,Cantidad,Unidad,Codigo,Descripcion,IProducto,notas,SUBSTR(notas,1,15) as Tel,SUBSTR(notas, length(substring_index(notas,' ',1)) +2, length(substring_index(notas,' ',2)) - length(substring_index(notas,' ',1))  ) as Aut ,SUBSTR(notas, length(substring_index(notas,' ',2)) + 2 , length(notas) - length(substring_index(notas,' ',2))) as fol ";
+	sql = sql + ", Impuesto1 as ieps,Impuesto3 as iva ";
+	sql = sql + "From qryDetalleTicket Where Venta=" + SysPK;
 
 	
 	Rst = pos_support.OpenRecordset(sql,Application.Adocnn);
@@ -168,7 +173,27 @@ var sql="";
 	Precio=0;
 	
 	while(!Rst.EOF){
-
+		spkProd = Rst("IProducto").Value;
+		
+		sqlOr = "SELECT DOrden.Sys_PK AS PKDOrden,DOrden.Especificaciones, Producto.Sys_PK AS PKProducto, Producto.Codigo,Producto.Descripcion,Producto.Unidad,DOrden.Cantidad FROM DOrden INNER JOIN Producto ON DOrden.IProducto=Producto.Sys_PK INNER JOIN orden o ON o.sys_pk = dorden.fk_orden_detalle INNER JOIN venta v ON v.sys_pk = o.iventa  where v.sys_pk = "+SysPK+" and producto.sys_pk = " + spkProd 
+			
+			
+		try
+		{
+			RstD = pos_support.OpenRecordset(sqlOr, Application.Adocnn);
+			
+		}
+		catch(e)
+		{
+			
+		}
+		
+		
+		//if (RstD.EOF && RstD.BOF) return 0;
+		if (RstD==null) 
+			{pkOr = 0;}
+		else
+		{pkOr = RstD("PKDOrden").Value;}
 		
 		PrecioTotalXProducto=0;
 		CantidadProd=Impresora.Redondear(Rst("Cantidad").Value,4);
@@ -220,9 +245,14 @@ var sql="";
 		Impresora.Texto (sDetalle);
 		
 		//************************************************
-		// Funcion para la reimpresion de recargas telefonicas
-		//*************************************************
-		if(Rst("notas").Value!=null)
+		if(ObtenerAdicionales(pkOr) != 0){
+			sAdicional = "Adicionales:";
+			sAdicional = sAdicional + ObtenerAdicionales(pkOr);
+			sAdicional = Impresora.getTextMultiLine(sAdicional,37,0);
+			Impresora.Texto(sAdicional+"\n");
+		}
+
+	if(Rst("notas").Value!=null)
 		{
 			cStr2 = "";
 			cStr2 = Rst("Tel").Value;
@@ -238,7 +268,6 @@ var sql="";
 			cStr4 = Impresora.AligTextInStr(cStr4, 30, 0, " ");
 			Impresora.Texto(cStr4);
 		}
-
 	Rst.MoveNext();
 	}
 
@@ -499,18 +528,18 @@ function ImprimirPrincipal(PKTicket,Referencia)
 	Impresora.Texto (Impresora.AligTextInStr("Cajero: " +nomcajero,30,0," "));
 	Impresora.Texto (Impresora.AligTextInStr("Caja: "+descaja,30,0," "));
 	Impresora.Texto (Impresora.AligTextInStr("Cliente: "+nomcliente,30,0," "));
-	Impresora.Texto (Impresora.AligTextInStr("Mesero: "+NomAgente,30,0," "));
-	Impresora.Texto (Impresora.AligTextInStr("Mesa: "+NomMesa,30,0," "));
+	//Impresora.Texto (Impresora.AligTextInStr("Mesero: "+NomAgente,30,0," "));
+	//Impresora.Texto (Impresora.AligTextInStr("Mesa: "+NomMesa,30,0," "));
 	
 	//  Modificacion mostar nombre,Telefono del Repartidor Servicio a Domicilio RPF: A835B08E09DA11E7982E6C0B84A7A5FC  Lun 8.may.2017 Joeh
-	Impresora.Texto(Impresora.SetChr(30,"=")); //Imprime 30 veces el caracter "-"	
-	stCad = "     - DATOS REPARTIDOR -";
-	Impresora.Texto(stCad);
+	//Impresora.Texto(Impresora.SetChr(30,"=")); //Imprime 30 veces el caracter "-"	
+	//stCad = "     - DATOS REPARTIDOR -";
+	//Impresora.Texto(stCad);
 	
-	LetrasNomR=Impresora.getTextMultiLine(Nombrepartidor,30,0);
-	Impresora.Texto(LetrasNomR);	  //	Impresora.Texto (Impresora.AligTextInStr(""+Nombrepartidor,30,0," ")); //   
-	Impresora.Texto (Impresora.AligTextInStr(""+Telrepartidor,30,0," "));
-	Impresora.Texto(" ");
+	//LetrasNomR=Impresora.getTextMultiLine(Nombrepartidor,30,0);
+	//Impresora.Texto(LetrasNomR);	  //	Impresora.Texto (Impresora.AligTextInStr(""+Nombrepartidor,30,0," ")); //   
+	//Impresora.Texto (Impresora.AligTextInStr(""+Telrepartidor,30,0," "));
+	//Impresora.Texto(" ");
 	
 	if (cImprimirDomicilio)
 	{
@@ -520,12 +549,12 @@ function ImprimirPrincipal(PKTicket,Referencia)
 	
 	//	Impresora.Texto(Impresora.SetChr(30,"=")); //Imprime 30 veces el caracter "-"	
 	    
-		Impresora.Texto("     - NOTAS RAPIDAS -");
+		//Impresora.Texto("     - NOTAS RAPIDAS -");
 		
-		notas=Impresora.getTextMultiLine(notas,30,0);
+		//notas=Impresora.getTextMultiLine(notas,30,0);
 		//Impresora.Texto (Impresora.AligTextInStr(""+notas,30,0," "));
-	    Impresora.Texto(notas);
-			Impresora.Texto(" ");
+	    //Impresora.Texto(notas);
+		//	Impresora.Texto(" ");
 
 	//Imprimir Titulos de columnas
 	ImprimirColumnas();
@@ -631,6 +660,41 @@ var stCad;
 	Impresora.Texto("DESCRIP CANT  UNID     IMPORTE");
 }
 //****************************************
+function ObtenerAdicionales(Pkorden){
+	var SQL;
+	var R;
+	var Adic;
+	var S;
+	
+	SQL = "SELECT DAdicionales.Sys_PK,DAdicionales.Cantidad AS Cant,Producto.Unidad AS unidad, Producto.Descripcion as Descripcion FROM DOrden INNER JOIN (DAdicionales INNER JOIN Producto ON DAdicionales.IProducto=Producto.Sys_PK) ON DOrden.Sys_PK=DAdicionales.FK_DOrden_Adicionales WHERE DOrden.Sys_PK= " + Pkorden;
+	
+	R=pos_support.OpenRecordset(SQL,Application.Adocnn);
+	
+	if(R == null) return 0;
+	if(R.EOF && R.BOF){
+		return 0;
+	}
+	
+	Adic="";
+	S = "";
+	while(!R.EOF){
+		
+		S = R("Cant").Value + " ";
+	//	S = S + R("unidad").Value + " ";
+		S = S + R("Descripcion").Value;
+		S = "\r" + Impresora.getTextMultiLine(S,37,0);
+		Adic = Adic + S;
+		
+		R.Movenext();
+	}
+	
+	R.Close();
+	R=null;
+	
+	if(Adic!=""){
+		return Adic;
+	}
+}
 
 
 
