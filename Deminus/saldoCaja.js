@@ -230,13 +230,19 @@ function corteCajaTerminal(){
 			return -2;
 		}
 		//Egreso del total en tarjetas de la caja
-		movCaja = LBEfectivo.Vale_Egreso(corte, gFunciones.ReferenciaAleatoria(), "Cierre de caja en tarjetas", 0, cajaTarjetas + importeTarjetas, catEgresoCorte, true, true, false, 2);
-		if(movCaja==null){
-			DataAccess.RollbackTrans();
-			eBasic.eMsgbox("No se realizo el egreso del saldo final en tarjetas:\n"+LBEfectivo.LastErrorDescrip);
-			fastCount=null;
-			return -2;
+		
+		if(cajaTarjetas + importeTarjetas > 0 ) 
+		{
+			movCaja = LBEfectivo.Vale_Egreso(corte, gFunciones.ReferenciaAleatoria(), "Cierre de caja en tarjetas", 0, cajaTarjetas + importeTarjetas, catEgresoCorte, true, true, false, 2);
+			if(movCaja==null){
+				DataAccess.RollbackTrans();
+				eBasic.eMsgbox("No se realizo el egreso del saldo final en tarjetas:\n"+LBEfectivo.LastErrorDescrip);
+				fastCount=null;
+				return -2;
+			}
 		}
+		
+		
 		if(Egreso(movCaja.Sys_PK)!=-1){
 			DataAccess.RollbackTrans();
 			fastCount=null;
