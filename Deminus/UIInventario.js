@@ -872,6 +872,7 @@ function Traspaso(A){
 	var pkDoc;
 	var boolDiferencia;
 	var uiInventario;
+	var sql;
 	Ref=gFunciones.ReferenciaAleatoria();
 	
 
