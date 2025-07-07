@@ -873,10 +873,12 @@ function Traspaso(A){
 	var boolDiferencia;
 	var uiInventario;
 	Ref=gFunciones.ReferenciaAleatoria();
+	
+
 	if(Inventario.Traspaso(Application.CurrentDate(),Ref))
 	{	
 		Ref=Inventario.ultimaReferenciaPorTraspaso;
-			ActualizarProductos(A);
+		//ActualizarProductos(A);
 		Formato=eBasic.AddSlashPath(Application.GetPath(0)) + "Reports\\Inventario\\Traspasos.xpd";
 		Reportes.EjecutarReporte(Formato,1,0,false,"","pPrimarykey",Ref+"-T","Producto");
 		pkDoc=Inventario.pkUltimaRequisicion;
@@ -889,6 +891,13 @@ function Traspaso(A){
 				Reportes.EjecutarReporte(FormatoDiferenciaSurtido,1,pkDoc,true);
 			}
 		}
+	try{
+		sql = "INSERT INTO stgt_log_auditoria ( operacion, tabla, fecha, usuario, log)  VALUES ('TRASPASOS','Cardex',now()," + Application.UIUsers.CurrentUser.Sys_PK + ",'INSERCION DE TRASPASO " + Ref +" ')";
+		Application.ADOCnn.Execute(sql);
+		
+	}catch(e){
+			
+	}
 	}else
 	{
 		if(Inventario.LastErrorDescrip!="") eBasic.eMsgbox(Inventario.LastErrorDescrip,6);
