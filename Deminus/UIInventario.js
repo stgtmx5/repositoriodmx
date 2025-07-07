@@ -892,6 +892,7 @@ function Traspaso(A){
 			}
 		}
 	try{
+		// JM:Registro del usuario que realiza el traspaso 
 		sql = "INSERT INTO stgt_log_auditoria (operacion, tabla, fecha, usuario, log)  VALUES ('TRASPASOS','Cardex',now()," + Application.UIUsers.CurrentUser.Sys_PK + ",'INSERCION DE TRASPASO " + Ref +" ')";
 		Application.ADOCnn.Execute(sql);
 		
