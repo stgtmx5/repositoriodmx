@@ -38,6 +38,7 @@ function evAlIniciar()
 	loadScript("saldoCaja","(Subprograma funciones al cerrar el corte)");
 	loadScript("config_email_arqueo_deminus","(Subprograma para configurar el de envío de correo.)");
 	loadScript("pos_requisiciones","(Subprograma de requisiciones.)");
+	loadScript("mov_inventario","(Subprograma Funciones de movimientos de inventario)");
 	//if(gFunciones.CFDActivo()){
 		loadScript("cfd","(Subprograma funciones para generacón de Comprobantes Fiscales Digitales)");	
 		
