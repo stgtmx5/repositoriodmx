@@ -874,6 +874,7 @@ function Traspaso(A) {
         ActualizarProductos(A);
 
         Formato = eBasic.AddSlashPath(Application.GetPath(0)) + "Reports\\Inventario\\Traspasos.xpd";
+		
         Reportes.EjecutarReporte(Formato, 1, 0, false, "", "pPrimarykey", Ref + "-T", "Producto");
 
         pkDoc = Inventario.pkUltimaRequisicion;
@@ -1393,7 +1394,7 @@ if (Brw==null)
 		Brw.sqlCommand.Parameters.Add(Brw.sqlCommand.NewNumericParameter("Mes",1));
 		Brw.sqlCommand.Parameters.Add(Brw.sqlCommand.NewNumericParameter("Anio",0));
 		Brw.sqlCommand.CmdSQL=CmdSQLQCardexXProducto;
-		Brw.KeyField = "IProducto";
+		Brw.KeyField = "Referencia"; //"IProducto";
 		
 		Brw.ReportsFolder=Reportes.CarpetaInventario;		
 		Brw.ObjectTypeName="Producto";
@@ -1488,7 +1489,7 @@ var Saldo;
 		if(Brw.Parameter("PKAlmacen").Value==0)
 			Brw.ShowFields("Almacen");
 		
-		Brw.SetColumnWidth("sys_pk",70);		
+		//Brw.SetColumnWidth("sys_pk",70);		
 		Brw.SetColumnWidth("Fecha",70);		
 		Brw.SetColumnWidth("Almacen",110);
 		Brw.SetColumnWidth("Categoria",110);		
