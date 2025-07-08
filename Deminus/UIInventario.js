@@ -6,7 +6,7 @@ Inventario.RedondearSaldoCantidad=1;
 //var CmdSQLQProductos = "SELECT * FROM qryCatProductos";
 //SELECT Fecha, IAlmacen, Almacen, Categoria, Referencia, IProducto, Producto, Entradas, Salidas, Debe, Haber, CostoPromedio, Divisa, TipoCambio, Debe_DivisaPred, Haber_DivisaPred, Notas, Mes, Anio FROM qrycardexxproducto;
 //SELECT Sys_PK, Numero, Almacen, Existencia, FEntrada, FCaducidad, IProducto FROM qrylotes;
-var CmdSQLQCardex= "SELECT Fecha, IAlmacen, Almacen, IProducto, Producto, Entradas, Salidas, Resto, Debe, Haber, CostoPromedio, TipoCambio, Mes, Anio  FROM qryCardex WHERE Anio=@Anio";
+var CmdSQLQCardex= "SELECT sys_pk, Fecha, IAlmacen, Almacen, IProducto, Producto, Entradas, Salidas, Resto, Debe, Haber, CostoPromedio, TipoCambio, Mes, Anio  FROM qryCardex WHERE Anio=@Anio";
 var CmdSQLQCardexXProducto= "SELECT Fecha, IAlmacen, Almacen, Categoria, Referencia, IProducto, Producto, Entradas, Salidas, Debe, Haber, CostoPromedio, Divisa, TipoCambio, Debe_DivisaPred, Haber_DivisaPred, Notas, Mes, Anio FROM qryCardexXProducto WHERE IProducto=@PKProducto AND Anio=@Anio";
 var CmdSQLQLotes="Select Sys_PK, Numero, Almacen, Existencia, FEntrada, FCaducidad, IProducto from qrylotes WHERE IProducto=@PKProducto";
 var CmdSQLVarios="SELECT qryCatProductos.Sys_PK, qryCatProductos.KLinea, qryCatProductos.PKDepartamento, qryCatProductos.Codigo AS Codigo, qryCatProductos.Descripcion AS Descripcion, qryCatProductos.Marca, qryCatProductos.Unidad AS Unidad, qryCatProductos.Existencia AS Existencia, qryCatProductos.Precio1 AS Precio1, qryCatProductos.Precio2 AS Precio2, qryCatProductos.Precio3 AS Precio3, qryCatProductos.Precio4 AS Precio4, qryCatProductos.Precio5 AS Precio5, qryCatProductos.Saldo AS Saldo,qryCatProductos.CostoUltimo,qryCatProductos.Clase,qryCatProductos.Divisa, qryCatProductos.Linea,Departamento.Descripcion AS Departamento,ut_Color.uf_Color FROM (qryCatProductos LEFT JOIN Departamento ON qryCatProductos.PKDepartamento=Departamento.Sys_PK) LEFT JOIN ut_Color ON (qryCatProductos.Sys_PK=ut_Color.uf_PK AND ut_Color.uf_Tabla='producto')";
@@ -863,48 +863,99 @@ var PKCardex;
 		Log(Inventario.LastErrorDescrip);
 		
 }
-function Traspaso(A){
-	//	if(Inventario.Traspaso())
-//ActualizarProductos(A);
-	var Ref;
-	var Formato;
-	var FormatoDiferenciaSurtido;
-	var pkDoc;
-	var boolDiferencia;
-	var uiInventario;
-	var sql;
-	Ref=gFunciones.ReferenciaAleatoria();
-	
 
-	if(Inventario.Traspaso(Application.CurrentDate(),Ref))
-	{	
-		Ref=Inventario.ultimaReferenciaPorTraspaso;
-		//ActualizarProductos(A);
-		Formato=eBasic.AddSlashPath(Application.GetPath(0)) + "Reports\\Inventario\\Traspasos.xpd";
-		Reportes.EjecutarReporte(Formato,1,0,false,"","pPrimarykey",Ref+"-T","Producto");
-		pkDoc=Inventario.pkUltimaRequisicion;
-			if(pkDoc>0)
-		{
-			boolDiferencia=Inventario.boolEjercido;
-			if(boolDiferencia==true)
-			{
-				FormatoDiferenciaSurtido=eBasic.AddSlashPath(Application.GetPath(0)) + "Reports\\Requisiciones\\Formato requisicion diferencias.xpd";				
-				Reportes.EjecutarReporte(FormatoDiferenciaSurtido,1,pkDoc,true);
-			}
-		}
-	try{
-		// JM:Registro del usuario que realiza el traspaso 
-		sql = "INSERT INTO stgt_log_auditoria (operacion, tabla, fecha, usuario, log)  VALUES ('TRASPASOS','Cardex',now()," + Application.UIUsers.CurrentUser.Sys_PK + ",'INSERCION DE TRASPASO " + Ref +" ')";
-		Application.ADOCnn.Execute(sql);
-		
-	}catch(e){
-			
-	}
-	}else
-	{
-		if(Inventario.LastErrorDescrip!="") eBasic.eMsgbox(Inventario.LastErrorDescrip,6);
-	}	
+
+function Traspaso(A) {
+    var Ref, Formato, FormatoDiferenciaSurtido, pkDoc, boolDiferencia, sql;
+    Ref = gFunciones.ReferenciaAleatoria();
+
+    if (Inventario.Traspaso(Application.CurrentDate(), Ref)) {
+        Ref = Inventario.ultimaReferenciaPorTraspaso;
+        ActualizarProductos(A);
+
+        Formato = eBasic.AddSlashPath(Application.GetPath(0)) + "Reports\\Inventario\\Traspasos.xpd";
+        Reportes.EjecutarReporte(Formato, 1, 0, false, "", "pPrimarykey", Ref + "-T", "Producto");
+
+        pkDoc = Inventario.pkUltimaRequisicion;
+        if (pkDoc > 0 && Inventario.boolEjercido === true) {
+            FormatoDiferenciaSurtido = eBasic.AddSlashPath(Application.GetPath(0)) + "Reports\\Requisiciones\\Formato requisicion diferencias.xpd";
+            Reportes.EjecutarReporte(FormatoDiferenciaSurtido, 1, pkDoc, true);
+        }
+
+try {
+    var usuario_app = Application.UIUsers.CurrentUser.Sys_PK;
+
+    // Obtener nombre de usuario
+    var sql = "SELECT t.username FROM tuser t WHERE t.sys_pk = " + usuario_app;
+    var rstUsuario = Application.ADOCnn.Execute(sql);
+
+    var username = "";
+    if (!rstUsuario.EOF) {
+        username = rstUsuario("username");
+    }
+
+    // JM:Consulta para obtener almacenes
+    sql = "SELECT " +
+        "origen.sys_pk AS APk, origen.descripcion AS Origen, " +
+        "destino.sys_pk AS DPK, destino.descripcion AS Destino " +
+        "FROM cardex c " +
+        "JOIN dcardex d ON d.FK_Cardex_Movimientos = c.Sys_PK " +
+        "JOIN almacen origen ON d.IAlmacen = origen.Sys_PK " +
+        "JOIN cardex c2 ON c2.Referencia = CONCAT(c.Referencia, '-T') " +
+        "JOIN dcardex d2 ON d2.FK_Cardex_Movimientos = c2.Sys_PK " +
+        "JOIN almacen destino ON d2.IAlmacen = destino.Sys_PK " +
+        "WHERE c.Referencia = '" + Ref + "' " +
+        "LIMIT 1";
+
+    var rst = Application.ADOCnn.Execute(sql);
+
+    var origen_pk = "";
+    var origen_desc = "";
+    var destino_pk = "";
+    var destino_desc = "";
+
+    if (!rst.EOF) {
+        origen_pk = rst("APk");
+        origen_desc = rst("Origen");
+        destino_pk = rst("DPK");
+        destino_desc = rst("Destino");
+    }
+
+    // JM:JSON formateado con saltos de línea, incluyendo el nombre de usuario
+    var log_json = "{\n" +
+        "\t\"referencia\": \"" + Ref + "\",\n" +
+        "\t\"usuario_app\": \"" + usuario_app + "\",\n" +
+        "\t\"nombre_usuario\": \"" + username + "\",\n" +
+        "\t\"usuario_bd\": \"\" + USER() + \"\",\n" +
+        "\t\"almacen_origen\": {\n" +
+        "\t\t\"pk\": \"" + origen_pk + "\",\n" +
+        "\t\t\"descripcion\": \"" + origen_desc + "\"\n" +
+        "\t},\n" +
+        "\t\"almacen_destino\": {\n" +
+        "\t\t\"pk\": \"" + destino_pk + "\",\n" +
+        "\t\t\"descripcion\": \"" + destino_desc + "\"\n" +
+        "\t}\n" +
+        "}";
+
+    // JM:Inserción SQL con USER() reemplazado dentro del JSON
+    sql = "INSERT INTO stgt_log_auditoria (operacion, tabla, fecha, usuario, log) " +
+        "VALUES ('TRASPASOS', 'Cardex', NOW(), " + usuario_app + ", " +
+        "REPLACE('" + log_json + "', '\" + USER() + \"', USER()))";
+
+    Application.ADOCnn.Execute(sql);
+
+    //eBasic.eMsgbox("Se realizó un traspaso correctamente");
+} catch (e) {
+    eBasic.eMsgbox("Error en la inserción en el log: " + e.message);
 }
+
+    } else {
+        if (Inventario.LastErrorDescrip !== "") {
+            eBasic.eMsgbox(Inventario.LastErrorDescrip, 6);
+        }
+    }
+}
+
 function Ensamble(A){
 	if(Inventario.Ensamble())
 		ActualizarProductos(A);
@@ -1335,6 +1386,7 @@ if (Brw==null)
 			Brw.SubTitle2=ObjAction.Context.ActiveWindow.GetFieldValue("Producto");
 		
 		Brw.sqlCommand.CmdType=1;
+		// se agrego STGT
 		//Brw.sqlCommand.Parameters.Add(Brw.sqlCommand.NewNumericParameter("PKCardex",0));
 		Brw.sqlCommand.Parameters.Add(Brw.sqlCommand.NewNumericParameter("PKProducto",PK));
 		Brw.sqlCommand.Parameters.Add(Brw.sqlCommand.NewNumericParameter("PKAlmacen",0));
@@ -1435,7 +1487,8 @@ var Saldo;
 		Brw.HideFields("IProducto;Producto;IAlmacen;Almacen;Mes;Anio",false);		
 		if(Brw.Parameter("PKAlmacen").Value==0)
 			Brw.ShowFields("Almacen");
-			
+		
+		Brw.SetColumnWidth("sys_pk",70);		
 		Brw.SetColumnWidth("Fecha",70);		
 		Brw.SetColumnWidth("Almacen",110);
 		Brw.SetColumnWidth("Categoria",110);		
@@ -1797,3 +1850,4 @@ function ImportarRequisicion()
 	}
 	
 }
+
