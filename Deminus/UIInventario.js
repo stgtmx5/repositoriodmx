@@ -1777,11 +1777,17 @@ function ImportarRequisicion()
 		return 0;
 			
 	if(Inventario.importarRequisiciones()){
-		ActualizarProductos();
+	
 	    Ref=Inventario.ultimaReferenciaPorTraspaso;
-        Formato=eBasic.AddSlashPath(Application.GetPath(0)) + "Reports\\Inventario\\Traspasos.xpd";
-        Reportes.EjecutarReporte(Formato,1,0,false,"","pPrimarykey",Ref+"-T","Producto");
-		LogTraspasos(Ref);
+		//eBasic.eMsgbox("Mensaje del traspaso "+Ref);
+		// STGT JM:Si el usuario cancela el movimiento de traspaso regresa cadena vacia
+		if (Ref!="")
+		{
+			Formato=eBasic.AddSlashPath(Application.GetPath(0)) + "Reports\\Inventario\\Traspasos.xpd";
+			Reportes.EjecutarReporte(Formato,1,0,false,"","pPrimarykey",Ref+"-T","Producto");
+			LogTraspasos(Ref);
+			ActualizarProductos();
+		}
 	}
 	
 }
