@@ -485,6 +485,13 @@ function imprimirDetalleCorte(){
 		S = Impresora.AligTextInStr(" " + fastCount.cDetCorte.stbillete1000,20,0," ");
 		S = S + Impresora.AligTextInStr(fastCount.cDetCorte.dbbillete1000,10,1," ");
 		Impresora.Texto(S);
+	// DETALLE TOTAL DE MONEDAS Y BILLETES
+	// STGT JM:Impresion de total de mondedas y biletes
+		Impresora.Texto(" ");
+		S = Impresora.AligTextInStr("  Total Efectivo: ", 16,0," ");
+		S= S + Impresora.AligTextInStr(Impresora.FormatoDinero(fastCount.montoefectivo),10,1," ");
+		Impresora.Texto(S);
+		Impresora.Texto(" ");
 
 		// -----------------------------------------------------------------------------
 		// Fabian 03/05/2024 - Mostrar el detalle de targetas, depositos, etc.
