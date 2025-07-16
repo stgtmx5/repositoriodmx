@@ -125,8 +125,11 @@ function createObjects()
 {
 	try
 	{
-		if(created == true)
-			return;
+		if(created)
+		{
+			if (uiDocFlujo.ping())
+				return;
+		}
 		
 		ObtenerMotor();
 		//engineType=AppEngine.inDataBaseType;
