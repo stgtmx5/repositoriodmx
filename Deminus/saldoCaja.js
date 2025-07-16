@@ -495,12 +495,7 @@ function imprimirDetalleCorte(){
 
 		// -----------------------------------------------------------------------------
 		// Fabian 03/05/2024 - Mostrar el detalle de targetas, depositos, etc.
-		Impresora.Texto(" ");
-		S=Impresora.AligTextInStr(" Otros",20,0," ");
-		S= S + Impresora.AligTextInStr("Monto",10,1," ");
-		Impresora.Texto(S);
-		Impresora.Texto(" ");
-		
+	
 		S = Impresora.AligTextInStr(" Tarjetas",20,0," ");
 		S = S + Impresora.AligTextInStr("$" + fastCount.cDetCorte.dbtargetas,10,1," ");
 		Impresora.Texto(S);
