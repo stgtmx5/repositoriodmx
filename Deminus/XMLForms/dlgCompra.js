@@ -130,8 +130,10 @@ function OnUnlock()
 	if(ThisForm.ControlObject("ctrlTipo").Value!=4 && ThisForm.ControlObject("ctrlTipo").Value!=5){
 		ThisForm.ControlObject("cUF_Importado1").Value=0;
 		ThisForm.ControlObject("cUF_Importado1").Enabled=false;		
+		ThisForm.ControlObject("ctrlFecha").Enabled=false;
 	}else{
 		ThisForm.ControlObject("cUF_Importado1").Enabled=true;
+		ThisForm.ControlObject("ctrlFecha").Enabled=false;
 	}
 	
 	if(ThisForm.ControlObject("cUF_Importado1").Value==0){

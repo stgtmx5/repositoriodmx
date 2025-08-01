@@ -22,15 +22,13 @@ function ticket(SysTicket, Referencia,Cambio,Efectivo,Cheque,Tarjeta,Vale,Deposi
 	// configurar Impresora.
 	pos_support.ConfigImpresora();
 
- 
-	// Imprimir encabezado de Ticket
+ 	// Imprimir encabezado de Ticket
 	ImprimirEncabezado();
 	
 	ImprimirPrincipal(SysTicket,Referencia);
 	
 	//Imprimir Detalle de Ticket	
 	ImprimirDetalle(SysTicket,Cambio,Efectivo,Cheque,Tarjeta,Vale,Deposito,Credito);
-
 
 	//Imprimir Pie de ticket
 	ImprimirPie();
@@ -84,6 +82,10 @@ function PrintCodeKiosco(Ticket)
 					Impresora.Texto("Folio de Facturacion");
 					Impresora.Texto("# "+sCode);
 					Impresora.Texto(" ");
+					//Impresora.Imagen("qr_facturacion_csp.bmp");
+//					Printer.DrawImage("C:\\imagenes\\qr_ticket.bmp");
+//					Printer.PrintText("Texto debajo del QR");
+
 				}
 			}
 		}
@@ -107,11 +109,9 @@ var stCad;
 		//	Impresora.Texto(referencias);
 	stCad = eBasic.ReplaceStrChars(stCad, String.fromCharCode(10), "");
 	stCad = Impresora.getTextMultiLine(stCad,30,0);
-		Impresora.Texto(stCad);
-
+	Impresora.Texto(stCad);
 
 	Impresora.Texto(Impresora.AligTextInStr("Deminus R5",30,2," "));
-	Impresora.Texto(" ");
 
 	return 0;
 }
@@ -157,13 +157,13 @@ var sql="";
 
 		
 	//sql="Select Precio,Descuentos,Impuestos,Cantidad,Unidad,Codigo,Descripcion, IProducto, notas From qryDetalleTicket Where Venta=" + SysPK;
-	sql="Select Precio,Descuentos,Impuestos,Cantidad,Unidad,Codigo,Descripcion,IProducto,notas,SUBSTR(notas,1,15) as Tel,SUBSTR(notas, length(substring_index(notas,' ',1)) +2, length(substring_index(notas,' ',2)) - length(substring_index(notas,' ',1))  ) as Aut ,SUBSTR(notas, length(substring_index(notas,' ',2)) + 2 , length(notas) - length(substring_index(notas,' ',2))) as fol ";
-	sql = sql + ", Impuesto1 as ieps,Impuesto3 as iva ";
-	sql = sql + "From qryDetalleTicket Where Venta=" + SysPK;
+	//sql="Select Precio,Descuentos,Impuestos,Cantidad,Unidad,Codigo,Descripcion,IProducto,notas,SUBSTR(notas,1,15) as Tel,SUBSTR(notas, length(substring_index(notas,' ',1)) +2, length(substring_index(notas,' ',2)) - length(substring_index(notas,' ',1))  ) as Aut ,SUBSTR(notas, length(substring_index(notas,' ',2)) + 2 , length(notas) - length(substring_index(notas,' ',2))) as fol ";
+	//sql = sql + ", Impuesto1 as ieps,Impuesto3 as iva ";
+	//sql = sql + "From qryDetalleTicket Where Venta=" + SysPK;
+	//Rst = pos_support.OpenRecordset(sql,Application.Adocnn);
+	
+	Rst = ThisCnn.execute("CALL stgt_sp_detalle_ticket(" + SysPK + ")");
 
-	
-	Rst = pos_support.OpenRecordset(sql,Application.Adocnn);
-	
 	if (Rst==null) return 0;
 	if (Rst.EOF && Rst.BOF) return 0;
 	
@@ -321,7 +321,7 @@ var sql="";
 			CodDivisa="M.N.";
 		}
 		Impresora.Texto(" ");	
-		Letras=eBasic.NumbersToWords(entero) +" "+ DescDivisa +" "+ eBasic.eFormat(((Total+propina)-entero)*100,"00") + "/100 "+CodDivisa;
+		Letras=eBasic.NumbersToWords(entero) +" "+ DescDivisa +" "+ eBasic.eFormat(((Total+propina)-entero)*100,"00") + "/100 "+ CodDivisa;
 		Letras=Impresora.getTextMultiLine(Letras,30,0);
 		Impresora.Texto(Letras);
 		
@@ -333,21 +333,20 @@ var sql="";
 			CodDivisa="M.N.";
 		}
 		Impresora.Texto(" ");	
-		Letras=eBasic.NumbersToWords(entero) +" "+ DescDivisa +" "+ eBasic.eFormat((Total-entero)*100,"00") + "/100 "+CodDivisa;
+		//Letras=eBasic.NumbersToWords(entero) +" "+ DescDivisa +" "+ eBasic.eFormat((Total-entero)*100,"00") + "/100 "+CodDivisa;
+		Letras= NumeroALetras (Total);  //eBasic.NumbersToWords(entero) +" "+ DescDivisa +" "+ eBasic.eFormat((Total-entero)*100,"00") + "/100 "+CodDivisa;
 		Letras=Impresora.getTextMultiLine(Letras,30,0);
 		Impresora.Texto(Letras);
 	}
 	Impresora.Texto(" ");
-	
 
-	
 	if(Cambio==-1){ //REIMPRESION DE TICKETS
 		Impresora.Texto ("*DUPLICADO "+pos_support.Fecha()+"  "+pos_support.Hora()+"*");
 		Cambio=0;
 	}
 
 	//Imprimir Detalle de Pago
-	Impresora.Texto(" ");
+	//Impresora.Texto(" ");
 	Impresora.Texto(Impresora.AligTextInStr("-Forma de Pago-",30,2," "));
 	Impresora.Texto(" ");
 
@@ -368,9 +367,6 @@ var sql="";
 	if (Credito>0) Impresora.Texto(Impresora.AligTextInStr("Crédito:",18,1," ") + Impresora.AligTextInStr(Impresora.FormatoDinero(Credito),12,1," "));
 
 	if (Cambio!=0) Impresora.Texto(Impresora.AligTextInStr("Cambio:",18,1," ") + Impresora.AligTextInStr(Impresora.FormatoDinero(Cambio),12,1," "));
-
-
-
 
 	Impresora.Texto(" ");
 	
@@ -694,10 +690,103 @@ function ObtenerAdicionales(Pkorden){
 	if(Adic!=""){
 		return Adic;
 	}
+	
+	
+	
 }
 
+function NumeroALetras(numero) {
+    var unidades = ["", "uno", "dos", "tres", "cuatro", "cinco", "seis", "siete", "ocho", "nueve"];
+    var especiales = ["diez", "once", "doce", "trece", "catorce", "quince"];
+    var decenas = ["", "", "veinte", "treinta", "cuarenta", "cincuenta", "sesenta", "setenta", "ochenta", "noventa"];
+    var centenas = ["", "ciento", "doscientos", "trescientos", "cuatrocientos", "quinientos", "seiscientos", "setecientos", "ochocientos", "novecientos"];
 
+    function quitarEspacios(texto) {
+        while (texto.indexOf("  ") !== -1) texto = texto.replace("  ", " ");
+        while (texto.charAt(0) === " ") texto = texto.substring(1);
+        while (texto.charAt(texto.length - 1) === " ") texto = texto.substring(0, texto.length - 1);
+        return texto;
+    }
 
+    function convertirMenor1000(n) {
+        var salida = "";
+        var cent = Math.floor(n / 100);
+        var resto = n % 100;
+
+        if (n === 100) return "cien";
+        if (cent > 0) salida += centenas[cent] + " ";
+
+        if (resto < 10) salida += unidades[resto];
+        else if (resto >= 10 && resto < 16) salida += especiales[resto - 10];
+        else if (resto < 20) salida += "dieci" + unidades[resto - 10];
+        else if (resto === 20) salida += "veinte";
+        else if (resto < 30) salida += "veinti" + unidades[resto - 20];
+        else {
+            var dec = Math.floor(resto / 10);
+            var uni = resto % 10;
+            salida += decenas[dec];
+            if (uni > 0) salida += " y " + unidades[uni];
+        }
+
+        return quitarEspacios(salida);
+    }
+
+    function seccion(n, divisor, nombre) {
+        var cientos = Math.floor(n / divisor);
+        var resto = n - cientos * divisor;
+        var letras = "";
+
+        if (cientos > 0) {
+            if (cientos === 1)
+                letras = nombre;
+            else
+                letras = NumeroALetras(cientos) + " " + nombre + "es";
+        }
+
+        if (resto > 0) letras += " " + NumeroALetras(resto);
+        return quitarEspacios(letras);
+    }
+
+    // Tomar parte entera y los dos dígitos después del punto como texto
+    var strNumero = numero.toString();
+    var partes = strNumero.split(".");
+    var parteEntera = parseInt(partes[0], 10);
+    var textoCentavos = "00";
+
+    if (partes.length > 1) {
+        var decimales = partes[1];
+        if (decimales.length === 1) {
+            textoCentavos = decimales + "0";
+        } else {
+            textoCentavos = decimales.substring(0, 2);
+        }
+    }
+
+    var resultado = "";
+
+    if (parteEntera === 0) {
+        resultado = "cero";
+    } else {
+        if (parteEntera >= 1000000)
+            resultado += seccion(parteEntera, 1000000, "millón");
+        else if (parteEntera >= 1000)
+            resultado += seccion(parteEntera, 1000, "mil");
+        else
+            resultado += convertirMenor1000(parteEntera);
+    }
+
+    resultado = quitarEspacios(resultado);
+
+    // Cambiar "uno" al final por "un"
+    if (resultado.substring(resultado.length - 3) === "uno") {
+        resultado = resultado.substring(0, resultado.length - 3) + "un";
+    }
+
+    var textoMoneda = (parteEntera === 1) ? " PESO " : " PESOS ";
+    var textoFinal = textoCentavos + "/100 M.N.";
+
+    return (resultado + textoMoneda + textoFinal).toUpperCase();
+}
 
 
 
