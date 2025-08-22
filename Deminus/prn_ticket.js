@@ -161,8 +161,8 @@ var sql="";
 	//sql = sql + ", Impuesto1 as ieps,Impuesto3 as iva ";
 	//sql = sql + "From qryDetalleTicket Where Venta=" + SysPK;
 	//Rst = pos_support.OpenRecordset(sql,Application.Adocnn);
-	
-	Rst = ThisCnn.execute("CALL stgt_sp_detalle_ticket(" + SysPK + ")");
+	Rst = pos_support.OpenRecordset("CALL stgt_sp_detalle_ticket2(" + SysPK + ")",Application.Adocnn);
+	// Rst = ThisCnn.execute("CALL stgt_sp_detalle_ticket2(" + SysPK + ")");
 
 	if (Rst==null) return 0;
 	if (Rst.EOF && Rst.BOF) return 0;
@@ -173,28 +173,7 @@ var sql="";
 	Precio=0;
 	
 	while(!Rst.EOF){
-		spkProd = Rst("IProducto").Value;
-		
-		sqlOr = "SELECT DOrden.Sys_PK AS PKDOrden,DOrden.Especificaciones, Producto.Sys_PK AS PKProducto, Producto.Codigo,Producto.Descripcion,Producto.Unidad,DOrden.Cantidad FROM DOrden INNER JOIN Producto ON DOrden.IProducto=Producto.Sys_PK INNER JOIN orden o ON o.sys_pk = dorden.fk_orden_detalle INNER JOIN venta v ON v.sys_pk = o.iventa  where v.sys_pk = "+SysPK+" and producto.sys_pk = " + spkProd 
-			
-			
-		try
-		{
-			RstD = pos_support.OpenRecordset(sqlOr, Application.Adocnn);
-			
-		}
-		catch(e)
-		{
-			
-		}
-		
-		
-		//if (RstD.EOF && RstD.BOF) return 0;
-		if (RstD==null) 
-			{pkOr = 0;}
-		else
-		{pkOr = RstD("PKDOrden").Value;}
-		
+
 		PrecioTotalXProducto=0;
 		CantidadProd=Impresora.Redondear(Rst("Cantidad").Value,4);
 		Precio = Rst("Precio").Value * CantidadProd;
@@ -210,16 +189,7 @@ var sql="";
 			PrecioTotalXProducto=(Precio-Rst("Descuentos").Value)+Rst("Impuestos").Value;
 		
 		PrecioTotalXProducto=Impresora.Redondear(PrecioTotalXProducto);
-
-		/********** Codigo.. 
-		cStr = Rst("Codigo").Value;
-		if (cStr.length >=7)
-			cStr= cStr.substring(0,7);º
-		else
-			cStr = Impresora.AligTextInStr(cStr,7,0," ");
-		
-		sDetalle =  cStr;
-	         */			
+	
 		sDetalle ="";
 
 		//************************************************
@@ -245,14 +215,19 @@ var sql="";
 		Impresora.Texto (sDetalle);
 		
 		//************************************************
-		if(ObtenerAdicionales(pkOr) != 0){
+		
+		// Bloque para validar si la partida tiene adicionales de ser asi los imprime
+		if(Rst("PKDOrden").Value!=null && Rst("Adicional").Value > 0 )
+		{
 			sAdicional = "Adicionales:";
+			pkOr = Rst("PKDOrden").Value;
 			sAdicional = sAdicional + ObtenerAdicionales(pkOr);
 			sAdicional = Impresora.getTextMultiLine(sAdicional,37,0);
 			Impresora.Texto(sAdicional+"\n");
 		}
 
-	if(Rst("notas").Value!=null)
+		// Bloque para reimpresion de recargas
+		if(Rst("notas").Value!=null)
 		{
 			cStr2 = "";
 			cStr2 = Rst("Tel").Value;
