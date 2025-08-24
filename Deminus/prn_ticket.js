@@ -161,7 +161,7 @@ var sql="";
 	//sql = sql + ", Impuesto1 as ieps,Impuesto3 as iva ";
 	//sql = sql + "From qryDetalleTicket Where Venta=" + SysPK;
 	//Rst = pos_support.OpenRecordset(sql,Application.Adocnn);
-	Rst = pos_support.OpenRecordset("CALL stgt_sp_detalle_ticket2(" + SysPK + ")",Application.Adocnn);
+	Rst = pos_support.OpenRecordset("CALL stgt_sp_detalle_ticket(" + SysPK + ")",Application.Adocnn);
 	// Rst = ThisCnn.execute("CALL stgt_sp_detalle_ticket2(" + SysPK + ")");
 
 	if (Rst==null) return 0;
