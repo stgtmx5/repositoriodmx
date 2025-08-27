@@ -1055,7 +1055,7 @@ function GuardarFactura(objAction){
 		DIOT(ThisObj.ThisObj.Sys_PK, false);
 		// aca debe ir la impresion
 		// var Formato = eBasic.AddSlashPath(Application.GetPath(0)) + "Reports\\Compras\\Factura_Compra.xpd";
-		var Formato = eBasic.AddSlashPath(Application.GetPath(0)) + "Reports\\Compras\\MX5_Factura.xpd";
+		var Formato = eBasic.AddSlashPath(Application.GetPath(0)) + "Reports\\Compras\\MX5-Factura.xpd";
 		Reportes.EjecutarReporte(Formato,1,0,false,"","pPrimarykey",ThisObj.ThisObj.Sys_PK,null);
 		return -1;
 		
