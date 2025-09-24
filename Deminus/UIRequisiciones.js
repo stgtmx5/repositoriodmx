@@ -906,7 +906,7 @@ function EditarRequisicion()
 				exportarMVI(uiDocFlujo.referenciaMVI, res);
 			}
 			Actualizar();
-			ruta = eBasic.AddSlashPath(Application.SourceAdmin.GetPath(0))+eBasic.AddSlashPath("Reports")+"Requisiciones\\" + XPDFormatReq;
+			//ruta = eBasic.AddSlashPath(Application.SourceAdmin.GetPath(0))+eBasic.AddSlashPath("Reports")+"Requisiciones\\" + XPDFormatReq;
 			Reportes.EjecutarReporte(ruta,Destino,res,true);	
 		}
 		return 1;

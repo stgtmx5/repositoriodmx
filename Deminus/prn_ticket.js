@@ -161,9 +161,9 @@ var sql="";
 	//sql = sql + ", Impuesto1 as ieps,Impuesto3 as iva ";
 	//sql = sql + "From qryDetalleTicket Where Venta=" + SysPK;
 	//Rst = pos_support.OpenRecordset(sql,Application.Adocnn);
-	Rst = pos_support.OpenRecordset("CALL stgt_sp_detalle_ticket(" + SysPK + ")",Application.Adocnn);
-	// Rst = ThisCnn.execute("CALL stgt_sp_detalle_ticket2(" + SysPK + ")");
-
+	Rst = pos_support.OpenRecordset("CALL stgt_sp_detalle_ticket2(" + SysPK + ")",Application.Adocnn);
+	
+	//	eBasic.eMsgbox(" Sys_pk de la Venta  "+SysPK+" Rst " + Rst);
 	if (Rst==null) return 0;
 	if (Rst.EOF && Rst.BOF) return 0;
 	
@@ -632,12 +632,23 @@ var stCad;
 }
 //****************************************
 function ObtenerAdicionales(Pkorden){
-	var SQL;
+	//var SQL;
 	var R;
 	var Adic;
 	var S;
 	
-	SQL = "SELECT DAdicionales.Sys_PK,DAdicionales.Cantidad AS Cant,Producto.Unidad AS unidad, Producto.Descripcion as Descripcion FROM DOrden INNER JOIN (DAdicionales INNER JOIN Producto ON DAdicionales.IProducto=Producto.Sys_PK) ON DOrden.Sys_PK=DAdicionales.FK_DOrden_Adicionales WHERE DOrden.Sys_PK= " + Pkorden;
+	//SQL = "SELECT DAdicionales.Sys_PK,DAdicionales.Cantidad AS Cant,Producto.Unidad AS unidad, Producto.Descripcion as Descripcion FROM DOrden INNER JOIN (DAdicionales INNER JOIN Producto ON DAdicionales.IProducto=Producto.Sys_PK) ON DOrden.Sys_PK=DAdicionales.FK_DOrden_Adicionales WHERE DOrden.Sys_PK in (" + Pkorden + ")";
+	var SQL = "SELECT \n" +
+          " Producto.Unidad AS unidad, \n" +
+          " Producto.Descripcion AS Descripcion, \n" +
+          " SUM(DAdicionales.Cantidad) AS Cant \n" +
+          "FROM DOrden \n" +
+          "INNER JOIN (DAdicionales \n" +
+          " INNER JOIN Producto ON DAdicionales.IProducto = Producto.Sys_PK) \n" +
+          " ON DOrden.Sys_PK = DAdicionales.FK_DOrden_Adicionales \n" +
+          "WHERE DOrden.Sys_PK IN (" + Pkorden + ") \n" +
+          "GROUP BY Producto.Unidad, Producto.Descripcion";
+
 	
 	R=pos_support.OpenRecordset(SQL,Application.Adocnn);
 	
@@ -648,6 +659,7 @@ function ObtenerAdicionales(Pkorden){
 	
 	Adic="";
 	S = "";
+	/*
 	while(!R.EOF){
 		
 		S = R("Cant").Value + " ";
@@ -658,6 +670,22 @@ function ObtenerAdicionales(Pkorden){
 		
 		R.Movenext();
 	}
+	*/
+while(!R.EOF){
+    S = R("Cant").Value + " ";
+    var desc = R("Descripcion").Value;
+    if (desc.length > 25) {
+        desc = desc.substring(0, 25);
+    }
+    S = S + desc;
+    S = "\r" + Impresora.getTextMultiLine(S, 37, 0);
+    Adic = Adic + S;
+    R.Movenext();
+}
+
+// Al final del bloque, agregamos los guiones
+Adic = Adic + "\r---------";
+	
 	
 	R.Close();
 	R=null;
