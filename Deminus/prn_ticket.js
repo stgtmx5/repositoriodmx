@@ -684,7 +684,7 @@ while(!R.EOF){
 }
 
 // Al final del bloque, agregamos los guiones
-Adic = Adic + "\r---------";
+Adic = Adic + "\r-------------------------";
 	
 	
 	R.Close();
