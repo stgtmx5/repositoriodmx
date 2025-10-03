@@ -555,7 +555,7 @@ function arqueo(PKCorte)
 			return 0;
 		}
 		if (R.EOF && R.BOF){			
-			eBasic.eMsgbox(ErrDesc +"(No se encontr� el corte indicado con clave"+ PKCorte +")",6);
+			eBasic.eMsgbox(ErrDesc +"(No se encontró el corte indicado con clave"+ PKCorte +")",6);
 			return 0;
 		}
 
@@ -807,13 +807,24 @@ R=ThisCnn.execute(sql);
 		cStr = Impresora.AligTextInStr(cStr,5,1," ");
 		sDetalle=sDetalle+cStr;
 		
+		if(R("Monto").Value == 0)
+		{
+			Impresora.Texto ("**** SIN PRECIO ****");
+		}
+		else
+		{
 		cStr = Impresora.FormatoDinero(R("Monto").Value);
 		cStr = Impresora.AligTextInStr(cStr,12,1," ");
 		sDetalle=sDetalle+cStr;
+		}
+		
+	
+		Impresora.Texto (sDetalle);
+		
 		
 		SumTotal = SumTotal + R("Monto").Value;
 		TotalDetalle= TotalDetalle +  R("Monto").Value;
-		Impresora.Texto (sDetalle);
+		
 		//***************
 		R.MoveNext();
 	}
