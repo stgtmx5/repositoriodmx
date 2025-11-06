@@ -907,7 +907,7 @@ function EditarRequisicion()
 			}
 			Actualizar();
 			//ruta = eBasic.AddSlashPath(Application.SourceAdmin.GetPath(0))+eBasic.AddSlashPath("Reports")+"Requisiciones\\" + XPDFormatReq;
-			Reportes.EjecutarReporte(ruta,Destino,res,true);	
+			//Reportes.EjecutarReporte(ruta,Destino,res,true);	
 		}
 		return 1;
 	}
@@ -1469,6 +1469,7 @@ function cloneRequisicion()
 		if (Brw==null) return -1;
 		
 		PKReq = Brw.PrimaryKeyValue;
+		eBasic.eMsgbox (" La Requisicion es " + PKReq );
 		
 		if (PKReq < 1)
 		{
