@@ -95,13 +95,89 @@ function ImprimirIngresosXFormaPago(PKCorte,Divisa,TCambio,DivisaPred,ErrDesc){
 	if(ErrDesc==null)
 		ErrDesc="";
 	
-	R=ThisCnn.execute("SELECT SUM(MovCaja.Cheques) AS Cheques, SUM(MovCaja.Depositos) AS Depositos, SUM(MovCaja.Efectivo) AS Efectivo, SUM(MovCaja.Tarjetas) AS Tarjetas, SUM( MovCaja.Vales) AS Vales FROM MovCaja WHERE MovCaja.ICorte="+PKCorte+" AND MovCaja.IDivisa="+Divisa+" AND (MovCaja.Cheques>=0 AND  MovCaja.Depositos>=0 AND MovCaja.Efectivo>=0 AND MovCaja.Tarjetas>=0 AND MovCaja.Vales>=0) AND MovCaja.ICategoria != (SELECT Categoria.Sys_PK FROM Categoria WHERE Categoria.Descripcion LIKE '%sobrante%' LIMIT 1)");
+//	R=ThisCnn.execute("SELECT SUM(MovCaja.Cheques) AS Cheques, SUM(MovCaja.Depositos) AS Depositos, SUM(MovCaja.Efectivo) AS Efectivo, SUM(MovCaja.Tarjetas) AS Tarjetas, SUM( MovCaja.Vales) AS Vales FROM MovCaja WHERE MovCaja.ICorte="+PKCorte+" AND MovCaja.IDivisa="+Divisa+" AND (MovCaja.Cheques>=0 AND  MovCaja.Depositos>=0 AND MovCaja.Efectivo>=0 AND MovCaja.Tarjetas>=0 AND MovCaja.Vales>=0) AND MovCaja.ICategoria != (SELECT Categoria.Sys_PK FROM Categoria WHERE Categoria.Descripcion LIKE '%sobrante%' LIMIT 1)");
+//	if(R==null){
+//		eBasic.eMsgbox(ErrDesc + "(Error al obtener ingresos por tipo del corte)");
+//		return 0;
+//	}
+consulta = "SELECT " +
+	"SUM(MovCaja.Cheques) AS Cheques, " +
+	"SUM(MovCaja.Depositos) AS Depositos, " +
+	"SUM(MovCaja.Efectivo) AS Efectivo, " +
+	"SUM(MovCaja.Tarjetas) AS Tarjetas, " +
+	"SUM(MovCaja.Vales) AS Vales " +
+	"FROM MovCaja " +
+	"INNER JOIN categoria c ON c.Sys_PK = MovCaja.ICategoria " +
+	"INNER JOIN venta v ON v.IMovCaja = MovCaja.Sys_PK " +
+	"WHERE MovCaja.ICorte = " + PKCorte + " " +
+	"AND MovCaja.IDivisa = " + Divisa + " " +
+	"AND (" +
+		"MovCaja.Cheques > 0 OR " +
+		"MovCaja.Depositos > 0 OR " +
+		"MovCaja.Efectivo > 0 OR " +
+		"MovCaja.Tarjetas > 0 OR " +
+		"MovCaja.Vales > 0" +
+	") " +
+	"AND v.StatusAdministrativo NOT IN (1, 99) " +
+	"AND v.documento = 6";
+
+//	"AND c.descripcion NOT LIKE '%fondo%' " +
+// "AND c.descripcion NOT LIKE '%Sobrante%' " +
+	
+	
+	R = ThisCnn.execute(consulta);
 	if(R==null){
 		eBasic.eMsgbox(ErrDesc + "(Error al obtener ingresos por tipo del corte)");
 		return 0;
 	}
 			
 	//DETALLE DE INGRESOS POR FORMA DE PAGO
+	SumTotal=0;
+		if (!(R.EOF && R.BOF)) {
+		var formasPago = [
+			{ nombre: " EFECTIVO", campo: "Efectivo" },
+			{ nombre: " TARJETAS", campo: "Tarjetas" },
+			{ nombre: " CHEQUES", campo: "Cheques" },
+			{ nombre: " DEPOSITOS", campo: "Depositos" },
+			{ nombre: " VALES", campo: "Vales" }
+		];
+
+		var hayFormaPago = false;
+
+		for (var i = 0; i < formasPago.length; i++) {
+			var fp = formasPago[i];
+			Val = Impresora.Redondear(R(fp.campo).Value);  // o R.fields(fp.campo).value
+
+			if (Val > 0) {
+				if (!hayFormaPago) {
+					Impresora.Texto(Impresora.AligTextInStr("- FORMA DE CONTADO -", 30, 2, " "));
+					Impresora.Texto("------------------------------");
+					hayFormaPago = true;
+				}
+
+				S = Impresora.AligTextInStr(fp.nombre, 16, 0, " ");
+				sImporte = Impresora.FormatoDinero(Val);
+				sImporte = Impresora.AligTextInStr(sImporte, 14, 1, " ");
+				Impresora.Texto(S + sImporte);
+				SumTotal += Val;
+			}
+		}
+
+		if (hayFormaPago) {
+			Impresora.Texto("------------------------------");
+			SumTotal = Impresora.Redondear(SumTotal);
+			S = Impresora.AligTextInStr(" TOTAL", 16, 0, " ");
+			sImporte = Impresora.FormatoDinero(SumTotal);
+			sImporte = Impresora.AligTextInStr(sImporte, 14, 1, " ");
+			Impresora.Texto(S + sImporte);
+			Impresora.Texto("==============================");
+		}
+	}
+
+	R.Close();
+			
+	//DETALLE DE INGRESOS POR FORMA DE PAGO
+/* ------
 	SumTotal=0;
 	if(!(R.EOF && R.BOF)){
 		//EFECTIVO
@@ -146,7 +222,7 @@ function ImprimirIngresosXFormaPago(PKCorte,Divisa,TCambio,DivisaPred,ErrDesc){
 	sImporte=Impresora.FormatoDinero(SumTotal);
 	sImporte=Impresora.AligTextInStr(sImporte,14,1," ");		
 	Impresora.Texto(S+sImporte);
-	
+**/	
 	//SI NO ES DIVISA PREDETERMINADA MULTIPLICAR POR TIPO DE CAMBIO
 	if(Divisa!=DivisaPred){
 		S=Impresora.AligTextInStr(" X TCambio",16,1," ");
@@ -161,7 +237,7 @@ function ImprimirIngresosXFormaPago(PKCorte,Divisa,TCambio,DivisaPred,ErrDesc){
 		sImporte=Impresora.AligTextInStr(sImporte,14,1," ");		
 		Impresora.Texto(S+sImporte);
 	}
-	
+
 	return -1;
 }
 
@@ -354,9 +430,9 @@ sql = "SELECT " +
       "Venta.StatusAdministrativo, " +
       "((Venta.Subtotal - Venta.Descuento1 - Venta.Descuento2) + " +
       "Venta.Impuesto1 + Venta.Impuesto2 + Venta.Impuesto3 + Venta.Impuesto4) AS Total2, " +
-      "m.efectivo + m.tarjetas AS total, Venta.ImporteAdicional " +
+      "m.efectivo + m.tarjetas AS Total, Venta.ImporteAdicional " +
       "FROM Venta INNER JOIN movcaja m ON venta.IMovCaja = m.Sys_PK " +
-      "WHERE Venta.Documento = 6 and Venta.StatusAdministrativo = 3" +
+      "WHERE Venta.Documento = 6 and Venta.StatusAdministrativo = 3 " +
       "AND m.ICorte = " + PKCorte + " " +
       "ORDER BY Venta.Sys_PK";
 	  
