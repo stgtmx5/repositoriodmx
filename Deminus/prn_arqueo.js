@@ -345,8 +345,21 @@ function ImprimirTicketsDelCorte(PKCorte,ErrDesc){
 		ErrDesc="";
 		
 	//anterior:: //R=ThisCnn.execute("SELECT Venta.Referencia, Venta.FormaPago,Venta.StatusFacturacion,Venta.StatusAdministrativo, ((Venta.Subtotal-Venta.Descuento1-Venta.Descuento2)+Venta.Impuesto1+ Venta.Impuesto2+ Venta.Impuesto3+ Venta.Impuesto4) AS Total, Venta.ImporteAdicional FROM Venta WHERE Venta.Documento=6 AND ((Venta.ICorte="+PKCorte+" And Venta.StatusAdministrativo>=3) OR Venta.StatusAdministrativo<3) ORDER BY Venta.Referencia");
-	sql="SELECT Venta.Referencia, Venta.FormaPago,Venta.StatusFacturacion,Venta.StatusAdministrativo, ((Venta.Subtotal-Venta.Descuento1-Venta.Descuento2)+Venta.Impuesto1+ Venta.Impuesto2+ Venta.Impuesto3+ Venta.Impuesto4) AS Total, Venta.ImporteAdicional FROM Venta WHERE Venta.Documento=6 AND ((Venta.ICorte="+PKCorte+" And Venta.StatusAdministrativo>=3) OR (Venta.ICorte="+PKCorte+" And Venta.StatusAdministrativo<3)) ORDER BY Venta.Referencia";
+	// "SELECT Venta.Referencia, Venta.FormaPago,Venta.StatusFacturacion,Venta.StatusAdministrativo, ((Venta.Subtotal-Venta.Descuento1-Venta.Descuento2)+Venta.Impuesto1+ Venta.Impuesto2+ Venta.Impuesto3+ Venta.Impuesto4) AS Total, Venta.ImporteAdicional FROM Venta WHERE Venta.Documento=6 AND ((Venta.ICorte="+PKCorte+" And Venta.StatusAdministrativo>=3) OR (Venta.ICorte="+PKCorte+" And Venta.StatusAdministrativo<3)) ORDER BY Venta.Referencia";
 
+sql = "SELECT " +
+      "Venta.Referencia, " +
+      "Venta.FormaPago, " +
+      "Venta.StatusFacturacion, " +
+      "Venta.StatusAdministrativo, " +
+      "((Venta.Subtotal - Venta.Descuento1 - Venta.Descuento2) + " +
+      "Venta.Impuesto1 + Venta.Impuesto2 + Venta.Impuesto3 + Venta.Impuesto4) AS Total2, " +
+      "m.efectivo + m.tarjetas AS total, Venta.ImporteAdicional " +
+      "FROM Venta INNER JOIN movcaja m ON venta.IMovCaja = m.Sys_PK " +
+      "WHERE Venta.Documento = 6 and Venta.StatusAdministrativo = 3" +
+      "AND m.ICorte = " + PKCorte + " " +
+      "ORDER BY Venta.Sys_PK";
+	  
 	sql2 = "SELECT c.nombre nombre, COUNT(r.sys_pk) cantidad FROM recargas r INNER JOIN ut_sku s ON r.isku = s.sys_pk INNER JOIN ut_carrier c ON s.carrier = c.sys_pk WHERE r.icorte = " + PKCorte + " AND status = 0 GROUP BY c.nombre;";
 
 	sql3 = "SELECT c.nombre nombre, SUM(s.monto) monto FROM recargas r INNER JOIN ut_sku s ON r.isku = s.sys_pk INNER JOIN ut_carrier c ON s.carrier = c.sys_pk INNER JOIN venta v ON r.iventa = v.sys_pk WHERE r.icorte = " + PKCorte + " AND status = 1 AND v.StatusAdministrativo = 3 GROUP BY c.nombre;"
