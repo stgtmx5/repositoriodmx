@@ -11,7 +11,33 @@ var RstData=null;
 var xBrowsers=eBasic.eCreateObject("eBrowsers.eBrw");
 
 RstData=DataAccess.CreateRecordset();
-RstData.Source="SELECT DCardex.FK_Cardex_Movimientos as Sys_PK, Cardex.Fecha AS Fecha, Cardex.Referencia AS Referencia, Almacen.Descripcion AS Almacen, Categoria.Descripcion AS Categoria, sum(DCardex.Abonos) AS Abonos, sum(DCardex.Cargos) AS Cargos, Cardex.Descripcion AS Notas FROM (((Almacen INNER JOIN DCardex ON Almacen.Sys_PK = DCardex.IAlmacen)  INNER JOIN Cardex ON Cardex.Sys_PK = DCardex.FK_Cardex_Movimientos) INNER JOIN Categoria ON Categoria.Sys_PK = Cardex.ICategoria) where Cardex.Referencia LIKE '%-T' and DATE_FORMAT(cardex.sys_dtcreated, '%Y%m%d') >= DATE_FORMAT (date_add(now(), interval -3 day),'%Y%m%d' ) group by DCardex.FK_Cardex_Movimientos, Cardex.Fecha, Cardex.Referencia, Almacen.Descripcion, Categoria.Descripcion, Cardex.Descripcion, DCardex.SYS_DTCreated ORDER BY DCardex.FK_Cardex_Movimientos DESC limit 1000";
+
+// RstData.Source="SELECT DCardex.FK_Cardex_Movimientos as Sys_PK, Cardex.Fecha AS Fecha, Cardex.Referencia AS Referencia, Almacen.Descripcion AS Almacen, Categoria.Descripcion AS Categoria, sum(DCardex.Abonos) AS Abonos, sum(DCardex.Cargos) AS Cargos, Cardex.Descripcion AS Notas FROM (((Almacen INNER JOIN DCardex ON Almacen.Sys_PK = DCardex.IAlmacen)  INNER JOIN Cardex ON Cardex.Sys_PK = DCardex.FK_Cardex_Movimientos) INNER JOIN Categoria ON Categoria.Sys_PK = Cardex.ICategoria) where Cardex.Referencia LIKE '%-T' and DATE_FORMAT(cardex.sys_dtcreated, '%Y%m%d') >= DATE_FORMAT (date_add(now(), interval -1 day),'%Y%m%d' ) group by DCardex.FK_Cardex_Movimientos, Cardex.Fecha, Cardex.Referencia, Almacen.Descripcion, Categoria.Descripcion, Cardex.Descripcion, DCardex.SYS_DTCreated ORDER BY DCardex.FK_Cardex_Movimientos DESC limit 1000";
+	RstData.Source = "SELECT STRAIGHT_JOIN " +
+    "DCardex.FK_Cardex_Movimientos AS Sys_PK, " +
+    "Cardex.Fecha AS Fecha, " +
+    "Cardex.Referencia AS Referencia, " +
+    "Almacen.Descripcion AS Almacen, " +
+    "Categoria.Descripcion AS Categoria, " +
+    "SUM(DCardex.Abonos) AS Abonos, " +
+    "SUM(DCardex.Cargos) AS Cargos, " +
+    "Cardex.Descripcion AS Notas " +
+    "FROM Cardex " +
+    "INNER JOIN DCardex ON DCardex.FK_Cardex_Movimientos = Cardex.Sys_PK " +
+    "INNER JOIN Almacen ON Almacen.Sys_PK = DCardex.IAlmacen " +
+    "INNER JOIN Categoria ON Categoria.Sys_PK = Cardex.ICategoria " +
+    "WHERE RIGHT(Cardex.Referencia, 2) = '-T' " +
+    "AND Cardex.sys_dtcreated >= DATE_SUB(CURDATE(), INTERVAL 2 DAY) " +
+    "GROUP BY " +
+    "DCardex.FK_Cardex_Movimientos, " +
+    "Cardex.Fecha, " +
+    "Cardex.Referencia, " +
+    "Almacen.Descripcion, " +
+    "Categoria.Descripcion, " +
+    "Cardex.Descripcion " +
+    "ORDER BY DCardex.FK_Cardex_Movimientos DESC " +
+    "LIMIT 500";
+
 
 if (!DataAccess.OpenRecordset(RstData,DataAccess.ADOCnn))
 {
