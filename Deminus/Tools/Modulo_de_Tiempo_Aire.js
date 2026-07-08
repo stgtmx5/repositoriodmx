@@ -7,16 +7,55 @@ RecargasAdmin();
 
 function RecargasAdmin()
 {
+	var FXGFactNet = null;
+	var QName = "";
+	var QNameEval = "";
+	var urlBase = "";
+
+	try {
+		QName = Application.GetQName();
+		Log(QName + " - " + sessionId);
+
+		QNameEval = String(QName).toLowerCase();
+
+		urlBase = "http://comercial.recargas/";
+
+		if (QNameEval.indexOf("comercial") != -1) {
+			urlBase = "http://comercial.recargas/";
+		}
+		else if (QNameEval.indexOf("one") != -1) {
+			urlBase = "http://tone.recargas/";
+		}
+		else if (QNameEval.indexOf("avm") != -1) {
+			urlBase = "http://avm.recargas/";
+		}
+
+		var appExe = "browser/EnterpriseBrowser.exe \"" + urlBase + "?ids=" + sessionId + "&qname=" + QName + "\" maximized topmost";
+
+		eBasic.eShell(appExe, 1);
+	}
+	catch(e) {
+		Log(e.message);
+	}
+}
+
+/*
+function RecargasAdmin()
+{
 	var FXGFactNet=null;
 	try{
 		QName=Application.GetQName();
-		var appExe = "browser/EnterpriseBrowser.exe \"http://comercial.recargas/?ids="+sessionId+"&qname="+QName+"\" maximized noborder topmost";
+		Log(QName + " - " + sessionId);
+		var appExe = "browser/EnterpriseBrowser.exe \"http://comercial.recargas/?ids="+sessionId+"&qname="+QName+"\" maximized topmost";
 		eBasic.eShell(appExe,1);
 	}
 	catch(e){
 		Log(e.message);
 	}
 }
+
+*/ 
+
 function GetSessionId()
 {
 	var currUser = Application.UIUsers.CurrentUser.Sys_PK;
