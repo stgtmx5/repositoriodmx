@@ -26,9 +26,7 @@ function RecargasAdmin()
 		else if (QNameEval.indexOf("one") != -1) {
 			urlBase = "http://tone.recargas/";
 		}
-		else if (QNameEval.indexOf("avm") != -1) {
-			urlBase = "http://avm.recargas/";
-		}
+
 
 		var appExe = "browser/EnterpriseBrowser.exe \"" + urlBase + "?ids=" + sessionId + "&qname=" + QName + "\" maximized topmost";
 
