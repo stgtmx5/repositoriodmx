@@ -15,6 +15,7 @@ var oInfo=null;
 var xNety=null;
 var uiComVentasBI;
 var created = false;
+var motorDetectado = false
 //var AppEngine = Application.InternalObject("UIDef");
 //SQLRequisiciones="SELECT DISTINCT Sys_PK, Fecha, Tipo_Requisicion, Status, Serie, Folio, Remitente, Destinatario, Asunto, almaceno as Almacen_Origen, almacend as Almacen_Destino FROM qRequisiciones Where Mes=@Mes AND Anio=@Anio @WhereWho @WhereID ORDER BY Sys_PK DESC;";
 
@@ -121,6 +122,122 @@ function getAccess()
 }
 
 /*Funcion pública para acceder desde el POS*/
+function createObjects() {
+    try {
+        //Log("STGT createObjects() invocado. created=" + created);
+
+        // Validar ping() seguro
+        if (created) {
+            try {
+                if (uiDocFlujo && uiDocFlujo.ping()) {
+                    //Log("Ping exitoso, objetos ya creados.");
+                    return;
+                } else {
+                    //Log("Ping falló, intentando reconectar.");
+                }
+            } catch (pingErr) {
+                Log("Error en ping(): " + pingErr.message + " - intentando reconectar.");
+            }
+        }
+
+        // Solo ejecutar ObtenerMotor una vez
+        if (!motorDetectado) {
+            ObtenerMotor();
+
+            if (engineType === -1) {
+                Log("No se ha podido determinar el motor de la base de datos.");
+                return -1;
+            }
+
+            motorDetectado = true;
+        }
+
+        switch (engineType) {
+            case 1:
+                XMLRequisiciones = eBasic.AddSlashPath(GetRepository()) + "SQLSvrRequisiciones.xml";
+                break;
+            case 2:
+                XMLRequisiciones = eBasic.AddSlashPath(GetRepository()) + "MySQLRequisiciones.xml";
+                break;
+            case 3:
+                XMLRequisiciones = eBasic.AddSlashPath(GetRepository()) + "MSAccessRequisiciones.xml";
+                break;
+            default:
+                Log("Motor no soportado: " + engineType);
+                return 0;
+        }
+
+        // Verificar que el archivo XML exista antes de continuar
+        if (!eBasic.FileExists(XMLRequisiciones)) {
+            Log("Archivo XML no encontrado: " + XMLRequisiciones);
+            return 0;
+        }
+
+        // Crear objetos COM
+        uiDocFlujo = eBasic.eCreateObject("uiFlujoDocumentos.cMain");
+        blDocFlujo = eBasic.eCreateObject("blFlujoDocumentos.cMain");
+        procesosCompras = eBasic.eCreateObject("ProcesosCompras.cMain");
+        uiComVentasBI = eBasic.eCreateObject("ComVentasBI.cMain");
+
+        if (!uiDocFlujo) {
+            Log("Error al crear objeto uiFlujoDocumentos.cMain.");
+            return 0;
+        }
+        if (!blDocFlujo) {
+            Log("Error al crear objeto blFlujoDocumentos.cMain.");
+            return 0;
+        }
+        if (!procesosCompras) {
+            Log("Error al crear objeto ProcesosCompras.cMain.");
+            return 0;
+        }
+
+        // Inicializar y cargar diccionario con manejo de errores
+        try {
+            if (!blDocFlujo.Initialize(Application.GetQName())) throw new Error(blDocFlujo.lastErrorDescription);
+            if (!blDocFlujo.LoadDiccionarioDatos(XMLRequisiciones)) throw new Error(blDocFlujo.lastErrorDescription);
+        } catch (initErr) {
+            Log("Error en Initialize o LoadDiccionarioDatos: " + initErr.message);
+            return 0;
+        }
+
+        // Validar Application.UIUsers
+        if (!Application.UIUsers) {
+            Log("Error: Application.UIUsers no está disponible.");
+            return 0;
+        }
+
+        blDocFlujo.setCOMobjects(Application.UIUsers);
+        procesosCompras.setObjects(blDocFlujo.obDriver);
+
+        if (!blDocFlujo.obDriver) {
+            Log("Error: blDocFlujo.obDriver no disponible.");
+            return 0;
+        }
+
+        procesosCompras.setCOMobjects(Application.UIUsers);
+        uiDocFlujo.setObjects(blDocFlujo.obDriver, blDocFlujo, procesosCompras);
+        uiDocFlujo.setCOMobjects(Application.UIUsers);
+        uiDocFlujo.filtrarProductosXGrupo = false;
+        uiDocFlujo.applicationName = "Deminus";
+        uiComVentasBI.setObjects(blDocFlujo.obDriver);
+		
+		// AJUSTAR EL TIME OUT
+		try {
+            Application.Adocnn.Execute("SET SESSION wait_timeout = 300");
+            // Log("wait_timeout configurado correctamente.");
+        } catch (timeoutErr) {
+            // Log("Advertencia wait_timeout: " + timeoutErr.message);
+        }
+
+        created = true;
+
+    } catch (e) {
+        Log("Error al acceder a componentes de requisiciones: " + e.message);
+    }
+}
+
+/*
 function createObjects()
 {
 	try
@@ -191,7 +308,7 @@ function createObjects()
 		Log("Error al acceder a componentes de requisiciones: " + e.message);
 	}
 }
-
+*/
 function DesplegarComVentasBI(){
 	createObjects();
 	if(uiComVentasBI.desplegarBI())
@@ -895,9 +1012,14 @@ function EditarRequisicion()
 		return -1;
 	}
 	
+	if(!ValidarUsuarioEdicionRequisicion(PKReq))
+	{
+		return -1;
+	}
+	
 	try
 	{
-		res = uiDocFlujo.editarRequisicion(Brw.PrimaryKeyValue);
+		res = uiDocFlujo.editarRequisicion(PKReq);
 		
 		if(res > 0)
 		{
@@ -1632,5 +1754,92 @@ function getValue(sql, campo)
 	{
 		Log("Error al obtener ");
 		return -1;
+	}
+}
+
+/*
+ * Valida quién puede editar una requisición.
+ * En status Autorizado (102, 202, 302 o 402), únicamente puede editar
+ * el usuario destinatario. Para los demás status conserva el comportamiento actual.
+ */
+function ValidarUsuarioEdicionRequisicion(PKReq)
+{
+	var status;
+	var usuarioActual;
+	var destinatario;
+	var sql;
+	var R;
+
+	try
+	{
+		status = StatusRequisicion(PKReq);
+
+		if(status <= 0)
+		{
+			return false;
+		}
+
+		/* La restricción aplica solamente cuando ya está autorizado. */
+		if(status != 102 && status != 202 && status != 302 && status != 402)
+		{
+			return true;
+		}
+
+		if(Application.UIUsers == null || Application.UIUsers.CurrentUser == null)
+		{
+			Log("No fue posible identificar al usuario actual.");
+			return false;
+		}
+
+		usuarioActual = Application.UIUsers.CurrentUser.Sys_PK;
+
+		sql = "SELECT PKDestinatario " +
+			  "FROM qRequisiciones " +
+			  "WHERE Sys_PK = " + PKReq;
+
+		R = Application.Database.OpenRecordset(sql, Application.adoCnn);
+
+		if(R == null)
+		{
+			Log("No fue posible obtener el usuario destino de la requisición.");
+			return false;
+		}
+
+		if(R.EOF && R.BOF)
+		{
+			R = null;
+			Log("No se encontró la requisición seleccionada.");
+			return false;
+		}
+
+		destinatario = R("PKDestinatario").Value;
+
+		R.Close();
+		R = null;
+
+		if(destinatario != usuarioActual)
+		{
+			Log("La requisición está autorizada. Únicamente el usuario destino puede modificarla.");
+			return false;
+		}
+
+		return true;
+	}
+	catch(e)
+	{
+		try
+		{
+			if(R != null)
+			{
+				R.Close();
+				R = null;
+			}
+		}
+		catch(closeError)
+		{
+		}
+
+		Log("Error al validar el usuario que puede editar la requisición. " + e.description);
+		return false;
 	}
 }

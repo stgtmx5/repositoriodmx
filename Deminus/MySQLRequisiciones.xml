@@ -58,11 +58,11 @@
 </sql>
  
 <sql id="qryDocFlujo_LoadUsuario">
-<![CDATA[ SELECT tuser.sys_pk, tuser.userid, tuser.username FROM tuser;]]>
+<![CDATA[ SELECT tuser.sys_pk, tuser.userid, tuser.username FROM tuser order by tuser.username ;]]>
 </sql>
 
 <sql id="qryDocFlujo_LoadUsuario2">
-<![CDATA[ SELECT tuser.sys_pk, tuser.userid, tuser.username FROM tuser where tuser.sys_pk <> @pkuservalidate;]]>
+<![CDATA[ SELECT tuser.sys_pk, tuser.userid, tuser.username FROM tuser where tuser.sys_pk <> @pkuservalidate order by tuser.username;]]>
 </sql>
 
 <sql id="Validate_Type_User">
@@ -334,7 +334,7 @@
 </sql>
 
 <sql id="CVObtenerCConsumo"> 
-	<![CDATA[ SELECT Sys_PK, Codigo, Descripcion, porcentaje_esperado FROM CConsumo; ]]>
+	<![CDATA[ SELECT Sys_PK, Codigo, Descripcion, porcentaje_esperado FROM CConsumo order by Descripcion; ]]>
 </sql>	
 
 <sql id="CVUpdateCConsumo"> 
